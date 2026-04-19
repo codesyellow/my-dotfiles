@@ -1,0 +1,103 @@
+// Color
+$bg: #272E33;
+$fg: #D3C6AA;
+$wn: #DBBC7F;
+$crit: #E67E80;
+
+// Font
+$ft: "JetbrainsMono Nerd Font";
+
+// Size
+$mod_pad: 4px 8px;
+
+*
+  font-family: $ft;
+  font-size: 14px;
+  color: $bg;
+
+window#waybar
+  background-color: $bg;
+
+tooltip
+  background: rgba(46, 52, 64, 0.9);
+  color: #ffffff;
+  border-radius: 4px;
+  border: 1px solid $fg;
+
+tooltip label 
+  color: $fg;
+
+label.module 
+  border-left: 1px solid rgba(211, 198, 170, 0.2);
+  color: $fg;
+  padding: $mod_pad;
+  margin: 0 2px;
+
+#tray 
+  border-left: 1px solid rgba(211, 198, 170, 0.2);
+  color: $fg;
+  padding: $mod_pad;
+  padding-right: 6px;
+
+#custom-power
+  padding: 0 4px 0 10px;
+
+#idle_inhibitor
+  padding-right: 12px;
+
+#idle_inhibitor.activated
+  color: $crit;
+  padding-right: 11px;
+
+#memory,
+#cpu
+  padding-right: 11px;
+
+#clock
+  border: none;
+
+#language
+  padding-right: 12px;
+
+// Critical state
+#pulseaudio.muted,
+#language.INTL
+  background-color: $crit;
+
+// Warning state
+#pulseaudio.bluetooth
+  background-color: $wn;
+
+#custom-lock
+  border-left: none;
+  border-right: 1px solid rgba(211, 198, 170, 0.2);
+  padding-right: 13px;
+
+// power menu popup styling
+menu 
+  background: rgba(46, 52, 64, 0.9);
+  border: 1px solid $fg;
+  border-radius: 0;
+
+menu menuitem label
+  color: $fg;
+
+menu item:hover 
+  background: rgba(46, 52, 64, 0.9);
+  border: 1px solid $fg;
+  color: $fg;
+
+#custom-pymor,
+#custom-countdown
+  border-left: none;
+  border-right: 1px solid rgba(211, 198, 170, 0.2);
+  padding-right: 5px;
+  color: $fg;
+
+
+#custom-countdown.critical,
+#custom-pymor.critical
+  color: $crit;
+
+#custom_pymor.normal
+  color: $fg;

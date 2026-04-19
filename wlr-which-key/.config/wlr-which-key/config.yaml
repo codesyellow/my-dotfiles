@@ -1,0 +1,213 @@
+# Theming
+font: JetBrainsMono Nerd Font 18
+background: "#2e3440d0"
+color: "#eceff4"
+border: "#a3be8c"
+separator: "   "
+border_width: 2
+corner_r: 0
+padding: 15 # Defaults to corner_r
+rows_per_column: 5 # No limit by default
+column_padding: 25 # Defaults to padding
+
+# Anchor and margin
+anchor: center # One of center, left, right, top, bottom, bottom-left, top-left, etc.
+# Only relevant when anchor is not center
+margin_right: 0
+margin_bottom: 0
+margin_left: 0
+margin_top: 0
+
+# namespace to use for the layer shell surface
+#namespace: "wlr_which_key"
+
+# Permits key bindings that conflict with compositor key bindings.
+# Default is `false`.
+inhibit_compositor_keyboard_shortcuts: true
+
+# Try to guess the correct keyboard layout to use. Default is `false`.
+auto_kbd_layout: true
+
+menu:
+  - key: "a"
+    desc: Action
+    submenu:
+      - key: "Return"
+        desc: "Exit"
+        cmd: ""
+      - key: "v"
+        desc: "Volume"
+        submenu:
+          - key: "Return"
+            desc: "Exit"
+            cmd: ""
+          - key: "k"
+            desc: "Increase Volume"
+            cmd: "volume.sh up"
+            keep_open: true
+          - key: "l"
+            desc: "Increase volume slowly"
+            cmd: "volume.sh small_up"
+            keep_open: true
+          - key: "h"
+            desc: "Decrease volume slowly"
+            cmd: "volume.sh small_down"
+            keep_open: true
+          - key: "m"
+            desc: "Mute"
+            cmd: "volume.sh mute"
+            keep_open: true
+          - key: "j"
+            desc: "Decrease Volume"
+            cmd: "volume.sh down"
+            keep_open: true
+      - key: "l"
+        desc: Niri Layout
+        submenu:
+          - key: "Return"
+            desc: "Exit"
+            cmd: ""
+          - key: "+"
+            desc: "Combine into column"
+            cmd: "niri msg action consume-window-into-column"
+          - key: "-"
+            desc: "Expel bottom window"
+            cmd: "niri msg action expel-window-from-column"
+          - key: "h"
+            desc: "Comsume or Expel left window"
+            cmd: "niri msg action consume-or-expel-window-left"
+          - key: "l"
+            desc: "Comsume or Expel right window"
+            cmd: "niri msg action consume-or-expel-window-right"
+          - key: "K"
+            desc: "Decrease the height of the window"
+            cmd: "niri msg action set-window-height '-20%'"
+          - key: "J"
+            desc: "Increase the height of the window"
+            cmd: "niri msg action set-window-height '+20%'"
+          - key: "H"
+            desc: "Decrease the width of the window"
+            cmd: "niri msg action set-window-width '-20%'"
+          - key: "L"
+            desc: "Increase the width of the window"
+            cmd: "niri msg action set-window-width '+20%'"
+
+      - key: "r"
+        desc: Runner
+        cmd: |
+          rofi -show combi -modes "combi,drun,run" -combi-modi "drun,run" -theme-str 'configuration { font: "Victor Mono Bold Italic 15"; display-combi: "cmd"; } * { bg0: #272E33; fg0: #D3C6AA; accent: #E69875; } window { background-color: @bg0; } mainbox { children: [inputbar, listview]; } inputbar { background-color: @bg0; children: [prompt, entry]; padding: 5px; } prompt { background-color: @bg0; text-color: @accent; margin: 0 15px 0 0; } entry { background-color: @bg0; text-color: @fg0; } listview { background-color: @bg0; lines: 12; } element { padding: 4px; background-color: @bg0; text-color: @fg0; } element selected { background-color: @accent; text-color: @bg0; }'
+      - key: "h"
+        desc: Clipboard history
+        cmd: cliphist list | rofi -dmenu | cliphist decode | wl-copy
+      - key: "s"
+        desc: Screenshot
+        submenu:
+          - key: "Return"
+            desc: "Exit"
+            cmd: ""
+          - key: "s"
+            desc: Current Monitor
+            cmd: nirishot
+          - key: "r"
+            desc: Region
+            cmd: nirishot region
+          - key: "e"
+            desc: Edit
+            cmd: nirishot edit
+      - key: "g"
+        desc: Gif
+        submenu:
+          - key: "Return"
+            desc: "Exit"
+            cmd: ""
+          - key: "g"
+            desc: Current Monitor
+            cmd: regif 8
+          - key: "r"
+            desc: Region
+            cmd: regif region 8
+
+  - key: "e"
+    desc: Exec
+    submenu:
+      - key: "Return"
+        desc: "Exit"
+        cmd: ""
+      - key: "c"
+        desc: Copy window title
+        cmd: copy_window_title.sh
+      - key: "v"
+        desc: AnkiVim
+        cmd: ankivim.sh
+      - key: "g"
+        desc: Search
+        cmd: searchon
+      - key: "t"
+        desc: Grab Text (Enhanced)
+        cmd: grab-text
+      - key: "d"
+        desc: Drag 
+        cmd: imdrag /home/digo/Downloads /home/digo/.pictures /home/digo/.wallpapers
+      - key: "w"
+        desc: Waybar
+        submenu:
+            - key: "Return"
+              desc: "Exit"
+              cmd: ""
+            - key: "c"
+              desc: Start countdown_gui
+              cmd: /home/digo/.config/waybar/scripts/countdown_gui.sh
+            - key: "3"
+              desc: Start 3 minutes countdown
+              cmd: kill $(cat /tmp/countdown_pid.pid); /home/digo/.config/waybar/scripts/countdown.py -t 3
+            - key: "5"
+              desc: Start 5 minutes countdown
+              cmd: kill $(cat /tmp/countdown_pid.pid); /home/digo/.config/waybar/scripts/countdown.py -t 5
+            - key: "p"
+              desc: Start pomodoro script
+              cmd: pymor.py
+
+
+      - key: "u"
+        desc: Utilities for some apps
+        submenu:
+            - key: "Return"
+              desc: "Exit"
+              cmd: ""
+            - key: "l"
+              desc: Set LSFG for process
+              cmd: vkpick
+
+  - key: "s"
+    desc: Scratchpads
+    submenu:
+      - key: "Return"
+        desc: "Exit"
+        cmd: ""
+      - key: "u"
+        desc: Dropdown
+        cmd: nscratch.py -id dropdown -m -a || alacritty -o window.opacity=0.7 --class dropdown --title dropdown
+      - key: "a"
+        desc: AnkiVim
+        cmd: nscratch.py -id ankivim -m -a || foot -a ankivim --title ankivim -e anki_parser.py english.txt 
+      - key: "l"
+        desc: lowfi
+        cmd: nscratch.py -id lowfi -m -a || foot -a lowfi -T lowfi -e lowfi -p
+      - key: "c"
+        desc: Calculator
+        cmd: nscratch.py -id calculator -m -a || foot -a calculator -T calculator -e python3 -q
+      - key: "i"
+        desc: AI
+        cmd: nscratch.py -id IA -m -a || foot -a IA -T IA -e aichat -r quick-res
+      - key: "t"
+        desc: Todo
+        cmd: nscratch.py -id Kuro -m -a || kuro
+      - key: "b"
+        desc: Monitor
+        cmd: nscratch.py -id monitor -m -a || foot -a monitor -T monitor -e btop 
+      - key: "n"
+        desc: Notes
+        cmd: nscratch.py -id notes -m -a || foot -a notes -T notes -e nvim --listen /tmp/neorg_server ~/.neorg/notes/index.norg
+      - key: "h"
+        desc: Habits
+        cmd: nscratch.py -id habits -m -a || foot -a notes -T habits -e nvim ~/.notes/habits.norg 

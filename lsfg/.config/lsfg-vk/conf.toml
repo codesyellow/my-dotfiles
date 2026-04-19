@@ -1,0 +1,165 @@
+version = 1
+
+[global]
+
+[[game]]
+exe = "FSD-Win64-Shipp"
+multiplier = 1
+flow_scale = 1.0
+performance_mode = true
+hdr_mode = false
+experimental_present_mode = "fifo"
+
+[[game]]
+exe = "GRB.exe"
+multiplier = 2
+flow_scale = 1.0
+performance_mode = true
+hdr_mode = false
+experimental_present_mode = "fifo"
+
+[[game]]
+exe = "ROTTR.exe"
+multiplier = 2
+flow_scale = 1.0
+performance_mode = true
+hdr_mode = false
+experimental_present_mode = "fifo"
+
+[[game]]
+exe = "TEW2.exe"
+multiplier = 1
+flow_scale = 1.0
+performance_mode = true
+hdr_mode = false
+experimental_present_mode = "fifo"
+
+[[game]]
+exe = "TheDivision2.ex"
+multiplier = 1
+flow_scale = 1.0
+performance_mode = true
+hdr_mode = false
+experimental_present_mode = "fifo"
+
+[[game]]
+exe = "thedivision.exe"
+multiplier = 2
+flow_scale = 1.0
+performance_mode = true
+hdr_mode = false
+experimental_present_mode = "fifo"
+
+[[game]]
+exe = "Main"
+multiplier = 1
+flow_scale = 1.0
+performance_mode = true
+hdr_mode = false
+experimental_present_mode = "fifo"
+
+[[game]]
+exe = "Blasphemous.exe"
+multiplier = 2
+flow_scale = 1.0
+performance_mode = true
+hdr_mode = false
+experimental_present_mode = "fifo"
+
+[[game]]
+exe = "hollow_knight.e"
+multiplier = 2
+flow_scale = 1.0
+performance_mode = true
+hdr_mode = false
+experimental_present_mode = "fifo"
+
+[[game]]
+exe = "DevilMayCry5.ex"
+multiplier = 2
+flow_scale = 1.0
+performance_mode = true
+hdr_mode = false
+experimental_present_mode = "fifo"
+
+
+[[game]]
+exe = "vkcube"
+multiplier = 4
+flow_scale = 1.0
+performance_mode = true
+hdr_mode = false
+experimental_present_mode = "fifo"
+
+[[game]]
+exe = "Fallout4.exe"
+multiplier = 1
+flow_scale = 1.0
+performance_mode = true
+hdr_mode = false
+experimental_present_mode = "fifo"
+
+[[game]]
+exe = "LittleNightmare"
+multiplier = 1
+flow_scale = 1.0
+performance_mode = true
+hdr_mode = false
+experimental_present_mode = "fifo"
+
+[[game]]
+exe = "bhd.exe"
+multiplier = 2
+flow_scale = 1.0
+performance_mode = true
+hdr_mode = false
+experimental_present_mode = "fifo"
+
+[[game]]
+exe = "Soulstice.exe"
+multiplier = 2
+flow_scale = 1.0
+performance_mode = true
+hdr_mode = false
+experimental_present_mode = "fifo"
+
+[[game]]
+exe = "PES2021.exe"
+multiplier = 1
+flow_scale = 1.0
+performance_mode = false
+hdr_mode = false
+experimental_present_mode = "fifo"
+
+[[game]]
+exe = "Remnant-Win64-S"
+multiplier = 2
+flow_scale = 1.0
+performance_mode = true
+hdr_mode = false
+experimental_present_mode = "fifo"
+
+[[game]]
+exe = "DyingLightGame."
+multiplier = 1
+flow_scale = 1.0
+performance_mode = true
+hdr_mode = false
+experimental_present_mode = "fifo"
+
+[[game]]
+exe = "witcher3.exe"
+multiplier = 2
+flow_scale = 1.0
+performance_mode = true
+hdr_mode = false
+experimental_present_mode = "fifo"
+
+
+[[game]]
+exe = "RiseOfTheTombRa"
+multiplier = 2
+flow_scale = 1.0
+performance_mode = true
+hdr_mode = false
+experimental_present_mode = "fifo"

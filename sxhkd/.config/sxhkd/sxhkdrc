@@ -1,0 +1,21 @@
+super + Return
+  st
+
+super + a 
+  wk -p a -D 1 --key-chords /home/digo/.config/wk/main.wks
+
+super + e 
+  wk -p e -D 1 --key-chords /home/digo/.config/wk/main.wks
+
+super + v 
+  wk -p v -D 1 --key-chords /home/digo/.config/wk/main.wks
+
+super + s 
+  wk -p s -D 1 --key-chords /home/digo/.config/wk/main.wks
+
+super + Escape
+  pkill -USR1 -x sxhkd; \
+  notify-send "sxhkd restarted"
+
+super + space
+  dmenu_run

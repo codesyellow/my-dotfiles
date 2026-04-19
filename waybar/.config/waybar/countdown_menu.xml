@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <object class="GtkMenu" id="menu">
+    <child>
+      <object class="GtkMenuItem" id="3_minutes">
+        <property name="label">3 minutes</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="5_minutes">
+        <property name="label">5 minutes</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="10_minutes">
+        <property name="label">10 minutes</property>
+      </object>
+    </child>
+    
+    <child>
+      <object class="GtkMenuItem" id="15_minutes">
+        <property name="label">15 minutes</property>
+      </object>
+    </child>
+ <child>
+      <object class="GtkSeparatorMenuItem" id="delimiter1"/>
+    </child> 
+  <child>
+      <object class="GtkMenuItem" id="20_minutes">
+        <property name="label">20 minutes</property>
+      </object>
+    </child> 
+ <child>
+      <object class="GtkMenuItem" id="25_minutes">
+        <property name="label">25 minutes</property>
+      </object>
+    </child> 
+ <child>
+      <object class="GtkMenuItem" id="30_minutes">
+        <property name="label">30 minutes</property>
+      </object>
+    </child> 
+  </object>
+</interface>

@@ -1,0 +1,338 @@
+// https://yalter.github.io/niri/Configuration:-Introduction
+spawn-at-startup "niriwake"
+spawn-at-startup "dbus-update-activation-environment" "--systemd" "WAYLAND_DISPLAY" "XDG_CURRENT_DESKTOP" "PATH"
+
+// this is for scratchpad
+spawn-at-startup "alacritty -o window.opacity=0.7 --class dropdown --title dropdown"
+spawn-at-startup "kuro"
+spawn-at-startup "foot -a IA -T IA -e aichat -r quick-res"
+
+hotkey-overlay {
+  skip-at-startup
+}
+
+prefer-no-csd
+screenshot-path "/home/digo/.pictures/"
+
+// https://github.com/YaLTeR/niri/wiki/Configuration:-Named-Workspaces
+workspace "mon-1" {
+  open-on-output "HDMI-A-1"
+}
+//workspace "mon-2" {
+//  open-on-output "DVI-D-1"
+//}
+workspace "scratch" {
+  open-on-output "HDMI-A-1"
+}
+
+// https://yalter.github.io/niri/Configuration:-Input
+input {
+  workspace-auto-back-and-forth
+  keyboard {
+    xkb {
+      layout "us,us"
+      variant ",intl"
+      options "lv5:caps_switch,grp:alt_shift_toggle"
+    }
+  }
+
+  mouse {
+    accel-profile "flat"
+  }
+
+  warp-mouse-to-focus
+}
+
+// https://yalter.github.io/niri/Configuration:-Outputs
+output "HDMI-A-1" {
+  focus-at-startup
+  mode "1920x1080@100.000"
+  position x=0 y=0
+  layout {
+    //default-column-width { proportion 0.94; }
+    gaps 4
+
+    preset-window-heights {
+        proportion 0.33333
+        proportion 0.5
+        proportion 1.0
+    }
+    preset-column-widths {
+        proportion 0.33
+        proportion 0.50
+        proportion 0.94
+    }
+  }
+}
+
+//output "DVI-D-1" {
+//  mode "1360x768@60.015"
+//  transform "270"
+//  position x=1920 y=-180
+//  layout {
+//    gaps 4
+//    default-column-width { proportion 0.92; }
+//    preset-window-heights {
+//        proportion 0.33333
+//        proportion 0.5
+//        proportion 0.92
+//    }
+//    preset-column-widths {
+//        proportion 0.33333
+//        proportion 0.5
+//        proportion 0.92
+//    }
+//    focus-ring {
+//      width 2
+//    }
+//  }
+//}
+
+// https://yalter.github.io/niri/Configuration:-Layout
+layout {
+  center-focused-column "never" // or always
+  focus-ring {
+    width 2
+    active-color "#DBBC7F"
+    inactive-color "#272E33"
+    urgent-color "#E67E80"
+  }
+
+  shadow {
+    // Uncomment the next line to enable shadows.
+    off
+
+    softness 5
+    spread 4
+    offset x=0 y=5
+    color "#1E2326"
+  }
+}
+
+// https://yalter.github.io/niri/Configuration:-Animations
+animations {
+  on
+}
+
+// https://yalter.github.io/niri/Configuration:-Window-Rules
+window-rule {
+  match app-id=r#"^org\.wezfurlong\.wezterm$"#
+  default-column-width {}
+}
+
+window-rule {
+  match app-id=r#"^it.catboy.ripdrag$"#
+  open-floating true
+  default-floating-position x=-730 y=20 relative-to="top"
+}
+
+window-rule {
+  match title=r#"^yad_countdown$"#
+  open-floating true
+  default-floating-position x=-730 y=20 relative-to="top"
+}
+
+window-rule {
+  match app-id=r#"^dropdown|calculator$"#
+  open-on-workspace "scratch"
+  open-floating true
+  default-column-width { proportion 0.80; }
+  default-window-height { proportion 0.50; }
+  open-focused false
+  default-floating-position x=0 y=20 relative-to="top"
+}
+
+// top right
+window-rule {
+  match app-id=r#"^IA$"#
+  open-on-workspace "scratch"
+  open-floating true
+  default-column-width { proportion 0.40; }
+  default-window-height { proportion 0.95; }
+  open-focused false
+  default-floating-position x=20 y=20 relative-to="top-right"
+}
+
+// top left
+window-rule {
+  match app-id=r#"^Kuro|todo$"#
+  open-on-workspace "scratch"
+  open-floating true
+  default-column-width { proportion 0.40; }
+  default-window-height { proportion 0.95; }
+  open-focused false
+  default-floating-position x=20 y=20 relative-to="top-left"
+}
+
+// center
+window-rule {
+  match app-id=r#"^notes|monitor|habits|lowfi$"#
+  open-on-workspace "scratch"
+  open-floating true
+  default-column-width { proportion 0.75; }
+  default-window-height { proportion 0.75; }
+  open-focused false
+}
+
+window-rule {
+  match app-id=r#"firefox$"# title="^Picture-in-Picture$"
+  open-floating true
+}
+
+window-rule {
+  match app-id=r#"^heroic|steam|gamescope$"#
+  open-on-workspace "mon-1"
+}
+
+// open as floating
+window-rule {
+  match app-id=r#"^ankivim$"#
+  open-floating true
+}
+
+// https://yalter.github.io/niri/Configuration%3A-Miscellaneous.html
+cursor {
+  hide-after-inactive-ms 1000
+  hide-when-typing
+}
+
+environment {
+  GDK_BACKEND "wayland,x11,*"
+  CLUTTER_BACKEND "wayland"
+  GTK_IM_MODULE "cedilla"
+  QT_IM_MODULE "cedilla"
+  //GTK_THEME "Everforest-Dark"
+  XCURSOR_THEME "GoogleDot-White"
+  XCURSOR_SIZE "24"
+  QT_WAYLAND_DISABLE_WINDOWDECORATION "1"
+  QT_QPA_PLATFORM "wayland"
+  QT_AUTO_SCREEN_SCALE_FACTOR "1"
+  QT_QPA_PLATFORMTHEME "qt5ct"
+  ENABLE_LAYER_MESA_ANTI_LAG "1"
+  //MANGOHUD "1"
+  PROTON_ENABLE_WAYLAND "1"
+  PROTON_USE_NTSYNC "1"
+}
+
+// https://yalter.github.io/niri/Configuration%3A-Key-Bindings.html
+binds {
+  ISO_Level5_Shift+1 { focus-workspace "mon-1"; }
+  ISO_Level5_Shift+2 { focus-workspace "mon-2"; }
+  ISO_Level5_Shift+Ctrl+1 { move-column-to-workspace "mon-1"; }
+  ISO_Level5_Shift+Ctrl+2 { move-column-to-workspace "mon-2"; }
+
+  ISO_Level5_Shift+W hotkey-overlay-title="Use Nirigo" { spawn "nirigo.py"; }
+  ISO_Level5_Shift+S hotkey-overlay-title="Scratchpads Keychords" { spawn-sh "wlr-which-key --initial-keys 's'"; }
+  ISO_Level5_Shift+A hotkey-overlay-title="Action Keychords" { spawn-sh "wlr-which-key --initial-keys 'a'"; }
+  ISO_Level5_Shift+E hotkey-overlay-title="Exec Keychords" { spawn-sh "wlr-which-key --initial-keys 'e'"; }
+  ISO_Level5_Shift+I hotkey-overlay-title="Toggle eww" { spawn-sh "eww open --toggle hud"; }
+
+  ISO_Level5_Shift+Shift+I { show-hotkey-overlay; }
+  ISO_Level5_Shift+T hotkey-overlay-title="Open a Terminal: Foot" { spawn "foot" "-e" "zellij"; }
+  Super+Alt+L hotkey-overlay-title="Lock the Screen: swaylock" { spawn "swaylock"; }
+
+  ISO_Level5_Shift+O repeat=false { toggle-overview; }
+
+  ISO_Level5_Shift+Shift+C repeat=false { close-window; }
+
+  ISO_Level5_Shift+Left  { focus-column-left; }
+  ISO_Level5_Shift+Down  { focus-window-down; }
+  ISO_Level5_Shift+Up    { focus-window-up; }
+  ISO_Level5_Shift+Right { focus-column-right; }
+  ISO_Level5_Shift+H     { focus-column-left; }
+  ISO_Level5_Shift+J     { focus-window-down; }
+  ISO_Level5_Shift+K     { focus-window-up; }
+  ISO_Level5_Shift+L     { focus-column-right; }
+
+  ISO_Level5_Shift+Ctrl+Left  { move-column-left; }
+  ISO_Level5_Shift+Ctrl+Down  { move-window-down; }
+  ISO_Level5_Shift+Ctrl+Up    { move-window-up; }
+  ISO_Level5_Shift+Ctrl+Right { move-column-right; }
+  ISO_Level5_Shift+Ctrl+H     { move-column-left; }
+  ISO_Level5_Shift+Ctrl+J     { move-window-down; }
+  ISO_Level5_Shift+Ctrl+K     { move-window-up; }
+  ISO_Level5_Shift+Ctrl+L     { move-column-right; }
+
+  ISO_Level5_Shift+Home { focus-column-first; }
+  ISO_Level5_Shift+End  { focus-column-last; }
+  ISO_Level5_Shift+Ctrl+Home { move-column-to-first; }
+  ISO_Level5_Shift+Ctrl+End  { move-column-to-last; }
+
+  ISO_Level5_Shift+Shift+Left  { focus-monitor-left; }
+  ISO_Level5_Shift+Shift+Down  { focus-monitor-down; }
+  ISO_Level5_Shift+Shift+Up    { focus-monitor-up; }
+  ISO_Level5_Shift+Shift+Right { focus-monitor-right; }
+//  ISO_Level5_Shift+Shift+H     { focus-monitor-left; }
+//  ISO_Level5_Shift+Shift+J     { focus-monitor-down; }
+//  ISO_Level5_Shift+Shift+K     { focus-monitor-up; }
+//  ISO_Level5_Shift+Shift+L     { focus-monitor-right; }
+
+  ISO_Level5_Shift+Shift+Ctrl+Left  { move-column-to-monitor-left; }
+  ISO_Level5_Shift+Shift+Ctrl+Down  { move-column-to-monitor-down; }
+  ISO_Level5_Shift+Shift+Ctrl+Up    { move-column-to-monitor-up; }
+  ISO_Level5_Shift+Shift+Ctrl+Right { move-column-to-monitor-right; }
+  ISO_Level5_Shift+Shift+Ctrl+H     { move-column-to-monitor-left; }
+  ISO_Level5_Shift+Shift+Ctrl+J     { move-column-to-monitor-down; }
+  ISO_Level5_Shift+Shift+Ctrl+K     { move-column-to-monitor-up; }
+  ISO_Level5_Shift+Shift+Ctrl+L     { move-column-to-monitor-right; }
+
+  ISO_Level5_Shift+Page_Down      { focus-workspace-down; }
+  ISO_Level5_Shift+Page_Up        { focus-workspace-up; }
+  ISO_Level5_Shift+Tab        { focus-window-previous; }
+  ISO_Level5_Shift+Ctrl+Page_Down { move-column-to-workspace-down; }
+  ISO_Level5_Shift+Ctrl+Page_Up   { move-column-to-workspace-up; }
+
+  ISO_Level5_Shift+Shift+Page_Down { move-workspace-down; }
+  ISO_Level5_Shift+Shift+Page_Up   { move-workspace-up; }
+  ISO_Level5_Shift+Shift+U         { move-workspace-down; }
+  // ISO_Level5_Shift+Shift+I         { move-workspace-up; }
+
+  ISO_Level5_Shift+WheelScrollDown      cooldown-ms=150 { focus-workspace-down; }
+  ISO_Level5_Shift+WheelScrollUp        cooldown-ms=150 { focus-workspace-up; }
+  ISO_Level5_Shift+Ctrl+WheelScrollDown cooldown-ms=150 { move-column-to-workspace-down; }
+  ISO_Level5_Shift+Ctrl+WheelScrollUp   cooldown-ms=150 { move-column-to-workspace-up; }
+
+  ISO_Level5_Shift+WheelScrollRight      { focus-column-right; }
+  ISO_Level5_Shift+WheelScrollLeft       { focus-column-left; }
+  ISO_Level5_Shift+Ctrl+WheelScrollRight { move-column-right; }
+  ISO_Level5_Shift+Ctrl+WheelScrollLeft  { move-column-left; }
+
+  ISO_Level5_Shift+Shift+WheelScrollDown      { focus-column-right; }
+  ISO_Level5_Shift+Shift+WheelScrollUp        { focus-column-left; }
+  ISO_Level5_Shift+Ctrl+Shift+WheelScrollDown { move-column-right; }
+  ISO_Level5_Shift+Ctrl+Shift+WheelScrollUp   { move-column-left; }
+
+  ISO_Level5_Shift+Shift+R { switch-preset-window-height; }
+  ISO_Level5_Shift+R { switch-preset-column-width; }
+  ISO_Level5_Shift+Ctrl+R { reset-window-height; }
+  ISO_Level5_Shift+F { maximize-column; }
+  ISO_Level5_Shift+Shift+F { fullscreen-window; }
+
+  ISO_Level5_Shift+Ctrl+F { expand-column-to-available-width; }
+
+  ISO_Level5_Shift+C { center-column; }
+
+  ISO_Level5_Shift+Ctrl+C { center-visible-columns; }
+
+  ISO_Level5_Shift+Shift+H { set-column-width "-10%"; }
+  ISO_Level5_Shift+Shift+L { set-column-width "+10%"; }
+  ISO_Level5_Shift+Shift+J { set-window-height "-10%"; }
+  ISO_Level5_Shift+Shift+K { set-window-height "+10%"; }
+
+  ISO_Level5_Shift+Comma  { consume-window-into-column; }
+  ISO_Level5_Shift+Period { expel-window-from-column; }
+
+
+  ISO_Level5_Shift+V       { toggle-window-floating; }
+  ISO_Level5_Shift+Shift+V { switch-focus-between-floating-and-tiling; }
+
+  Print { screenshot; }
+  Ctrl+Print { screenshot-screen; }
+  Alt+Print { screenshot-window; }
+
+  ISO_Level5_Shift+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
+
+  ISO_Level5_Shift+Shift+E { quit; }
+  Ctrl+Alt+Delete { quit; }
+}
+

@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+waybar &
+is_running() {
+    if [[ "$2" == "node" ]]; then
+        script=$(ps -ef | grep 'node' | grep $1)
+    else
+        script=$(ps -ef | grep 'bash' | grep $1)
+    fi
+    if [[ -z "$script" ]]; then
+        $1 &
+    fi
+}
+
+is_running 'easy_always.sh'
+is_running 'gameon.mjs' 'node'
+
+hyprpaper &
+hypridle &
+hyprsunset -t 3500 &
+systemctl --user import-environment PATH &
+dunst &
+#wl-paste -pw wl-copy &
+/usr/lib/polkit-kde-authentication-agent-1 &
+swayosd-server &
+ianny &
+#jamesdsp -t &
+wl-paste --type text --watch cliphist store &
+syncthing server &
+is_music.py &
+#xremap ~/.config/xremap/config.yml --mouse &

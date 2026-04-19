@@ -1,0 +1,136 @@
+// -*- mode: jsonc -*-
+{
+  // "layer": "top", // Waybar at top layer
+  // "position": "bottom", // Waybar position (top|bottom|left|right)
+  //  "spacing": 4, // Gaps between modules (4px)
+  // Choose the order of the modules
+  "modules-left": [
+    "custom/pymor",
+    "custom/countdown",
+    "custom/lock",
+  ],
+  "modules-center": [
+    "clock",
+  ],
+  "modules-right": [
+    "idle_inhibitor",
+    "pulseaudio",
+    "cpu",
+    "memory",
+    "temperature",
+    "niri/language",
+    "custom/power"],
+    "idle_inhibitor": {
+    "format": "{icon}",
+    "format-icons": {
+      "activated": "",
+      "deactivated": ""
+    }
+  },
+  "tray": {
+    // "icon-size": 21,
+    "spacing": 10,
+    // "icons": {
+    //   "blueman": "bluetooth",
+    //   "TelegramDesktop": "$HOME/.local/share/icons/hicolor/16x16/apps/telegram.png"
+    // }
+  },
+  "clock": {
+    "timezone": "America/Sao_Paulo",
+    "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
+    "format": "{:%H:%M|%a-%d/%h}"
+  },
+  "cpu": {
+    "format": "{usage}% ",
+    "tooltip": false
+  },
+  "memory": {
+    "format": "{}% "
+  },
+  "custom/pymor": {
+      "format": "{} ",
+      "exec": "$HOME/.config/waybar/scripts/pomodoro.sh",
+      "return-type": "json",
+      "signal": 25,
+      "interval": "once",
+      "on-click": "setsid $HOME/.config/waybar/scripts/pymor.py &",
+      "on-click-right": "kill $(cat /tmp/pymor_pid.pid)",
+  },
+ "custom/countdown": {
+      "format": "{} ",
+      "exec": "$HOME/.config/waybar/scripts/countdown_widget.sh",
+      "return-type": "json",
+      "signal": 5,
+      "interval": "once",
+//      "on-click": "$HOME/.config/waybar/scripts/countdown_gui.sh",
+      "on-click-right": "kill $(cat /tmp/countdown_pid.pid)",
+      "on-scroll-up": "",
+      "menu": "on-click",
+      "menu-file": "$HOME/.config/waybar/countdown_menu.xml", // Menu file in resources folder
+      "menu-actions": {
+      "3_minutes": "$HOME/.config/waybar/scripts/countdown.py -t 3",
+      "5_minutes": "$HOME/.config/waybar/scripts/countdown.py -t 5",
+      "10_minutes": "$HOME/.config/waybar/scripts/countdown.py -t 10",
+      "15_minutes": "$HOME/.config/waybar/scripts/countdown.py -t 15",
+      "20_minutes": "$HOME/.config/waybar/scripts/countdown.py -t 20",
+      "25_minutes": "$HOME/.config/waybar/scripts/countdown.py -t 25",
+      "30_minutes": "$HOME/.config/waybar/scripts/countdown.py -t 30",
+    }
+  },
+ "custom/lock": {
+    "format": "󰌿",
+    "menu": "on-click",
+    "menu-file": "$HOME/.config/waybar/lock_menu.xml", // Menu file in resources folder
+    "menu-actions": {
+      "lock": "swaylock -f",
+      "lock_turnoff": "niri msg action power-off-monitors; swaylock -f",
+    }
+  },
+  "temperature": {
+    "thermal-zone": 2,
+    // "hwmon-path": "/sys/class/hwmon/hwmon2/temp1_input",
+    "critical-threshold": 80,
+    // "format-critical": "{temperatureC}°C {icon}",
+    "format": "{temperatureC}°C {icon}",
+    "format-icons": ["󰉬", "", "󰉪"]
+  },
+  "pulseaudio": {
+    // "scroll-step": 1, // %, can be a float
+    "format": "{volume}% {icon} {format_source}",
+    "format-bluetooth": "{volume}% {icon} {format_source}",
+    "format-bluetooth-muted": "󰅶 {icon} {format_source}",
+    "format-muted": "󰅶 {format_source}",
+    "format-source": "{volume}% ",
+    "format-source-muted": "",
+    "format-icons": {
+      "headphone": "",
+      "hands-free": "󰂑",
+      "headset": "󰂑",
+      "phone": "",
+      "portable": "",
+      "car": "",
+      "default": ["", "", ""]
+    },
+    "on-click": "pavucontrol"
+  },
+  "custom/power": {
+    "format" : "⏻ ",
+    "tooltip": false,
+    "menu": "on-click",
+    "menu-file": "$HOME/.config/waybar/power_menu.xml", // Menu file in resources folder
+    "menu-actions": {
+      "shutdown": "systemctl poweroff",
+      "reboot": "systemctl reboot",
+      "suspend": "systemctl suspend",
+      "hibernate": "systemctl hibernate"
+    }
+  },
+  "niri/language": {
+    "format": "{} ",
+    "format-en": "US",
+    "format-en-intl": "INTL",
+    "on-click": "niri msg action switch-layout next",
+    "on-click-right": "niri msg action switch-layout prev",
+    "on-click-middle": "niri msg action switch-layout 0"
+  }
+}

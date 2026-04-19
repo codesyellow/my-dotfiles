@@ -1,0 +1,22 @@
+[pyprland]
+plugins = ["scratchpads"]
+
+[scratchpads.term]
+animation = "fromTop"
+command = "alacritty --class alacritty-dropterm --config-file ~/.config/alacritty/scratchpad.toml -e bash -c 'zellij attach --create scratch'"
+class = "alacritty-dropterm"
+size = "75% 60%"
+max_size = "1920px 100%"
+margin = 50
+
+[scratchpads.volume]
+animation = "fromRight"
+command = "pavucontrol"
+class = "org.pulseaudio.pavucontrol"
+size = "40% 90%"
+unfocus = "hide"
+
+[scratchpads.calc]
+animation = "fromTop"
+command = "foot -f monospace:size=24 -T calculator -e python -ic ''"
+size = "40% 40%"
