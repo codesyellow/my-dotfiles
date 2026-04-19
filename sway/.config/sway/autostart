@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+run_unit() {
+  if [[ "$2" == "gui" ]]; then
+    app2unit -s a -- $1 &
+  else
+    app2unit -s b -- $1 &
+  fi
+}
+
+# Opening pavucontrol solve an audio issue i'm having at boot.
+pavucontrol &
+
+run_unit waybar
+run_unit swayforth
+run_unit gameon
+run_unit "easyeffects --gapplication-service"
+run_unit "gammastep -P -O 2500"
+run_unit whatsap_on.sh
+run_unit dunst
+run_unit is_music
+#run_unit sway-audio-idle-inhibit
+run_unit "swayidle -w"
+run_unit syncthing
+#uwsm app -- easy_always.sh &
+run_unit /usr/lib/polkit-kde-authentication-agent-1
+run_unit "wl-paste --type text --watch cliphist store"
+run_unit "systemctl --user import-environment PATH"
+run_unit killpavu
+run_unit waybar-swaymode
+
+# This is for fixing the audio cracking while using Easyeffects on games.
+pw-metadata -n settings 0 clock.force-rate 48000 && pw-metadata -n settings 0 clock.force-quantum 500 &
+
+pamixer --set-volume 30 &

@@ -1,0 +1,268 @@
+# Read `man 5 sway` for a complete reference.
+# NB (Normal Bindings)
+# MR (Mode Rules)
+# MGB (Mode Global Bindings)
+# MBS (Mode Bindings Scratchpads)
+# MBA (Mode Bindings Action)
+# MBE (Mode Bindings Exec)
+# MBW (Mode Bindings Workspaces)
+
+# Variables
+set $fg #D3C6AA
+set $warning #E69875
+set $bg #272E33
+set $bg1 #2E383C
+set $mod Mod4
+set $left h
+set $down j
+set $up k
+set $right l
+set $mod Mod4
+set $alt_mod Mod1
+set $left h
+set $down j
+set $up k
+set $right l
+set $term foot -e zellij
+set $menu wmenu-run -f "Martian Mono Nerd Font 15"  -N "#272E33" -n "#D3C6AA" -S "#272E33" -s "#E69875"
+
+# Autostart
+exec ~/.config/sway/autostart
+
+#workspace 1 output VGA-1
+#workspace 2 output VGA-1
+#workspace 3 output VGA-1
+workspace 4 output HDMI-A-2
+workspace 5 output HDMI-A-2
+workspace 6 output HDMI-A-2
+
+# tab related
+workspace_layout tabbed
+# colors                border background text indicator floating border
+client.focused          $warning  $bg  $fg $bg       $warning
+client.focused_inactive $fg       $bg  $fg $warning  $bg1
+client.unfocused        $bg       $bg  $fg $warning  $bg1
+default_border pixel
+hide_edge_borders --i3 smart
+# hide mouse
+seat seat0 hide_cursor 3000
+# monitor
+output HDMI-A-2 res 1280x1024@75HZ pos 0 0 bg ~/.wallpapers/ign_robots.png fill
+
+# Read `man 5 sway-input` for more information about this section.
+input type:pointer {
+  accel_profile "flat" # disable mouse acceleration (enabled by default; to set it manually, use "adaptive" instead of "flat")
+}
+input type:keyboard {
+  xkb_layout us,us
+  xkb_variant ,intl
+  xkb_options caps:ctrl_modifier,caps:escape,grp:alt_shift_toggle
+} 
+
+# NB
+bindsym $mod+Return exec $term
+bindsym $alt_mod+Return exec $term
+bindsym $mod+Shift+q kill
+bindsym $mod+d exec $menu
+bindsym $alt_mod+d exec $menu
+floating_modifier $mod normal
+bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
+bindsym $mod+t exec $term
+bindsym $mod+Shift+c kill
+bindsym $mod+Shift+r reload
+bindsym $mod+$left focus left
+bindsym $mod+$down focus down
+bindsym $mod+$up focus up
+bindsym $mod+$right focus right
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
+bindsym $mod+n focus output right
+bindsym $mod+p focus output left
+bindsym $mod+Shift+$left move left
+bindsym $mod+Shift+$down move down
+bindsym $mod+Shift+$up move up
+bindsym $mod+Shift+$right move right
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
+#bindsym $mod+tab workspace back_and_forth
+bindsym $mod+tab exec "swaysome back"
+bindsym $mod+f fullscreen
+bindsym $mod+Shift+space floating toggle
+bindsym $mod+space focus mode_toggle
+floating_modifier $mod normal
+
+# MR
+mode "action" {
+  # MBA
+  bindsym k kill, mode "default"
+  bindsym r reload, mode "default"
+  bindsym f fullscreen, mode "default"
+  bindsym n exec "dunstctl close-all", mode "default"
+  bindsym l exec "killall -USR1 swayidle", mode "default"
+  bindsym m exec "360.sh 80", mode "default"
+  bindsym z exec "swayshot zoom", mode "default"
+  bindsym w exec "swayprop id", mode "default"
+  bindsym d exec "imdrag ~/Downloads ~/.pictures ~/.wallpapers", mode "default"
+  bindsym s mode "screenshot"; exec mode "default"
+  bindsym g mode "gif_record"; exec mode "default"
+  bindsym b mode "bar"; exec mode "default"
+
+  bindsym Return mode "default"
+  bindsym Escape mode "default"
+}
+
+mode "exec" {
+  # MBE
+  bindsym r exec $menu, mode "default"
+  bindsym t exec "kitty -T alt_term -e zellij", mode "default"
+  bindsym h exec 'cliphist list | wmenu -l 10 -f "Martian Mono Nerd Font 16"  -N "#272E33" -n "#D3C6AA" -S "#272E33" -s "#E69875"  | cliphist decode | wl-copy', mode "default"
+  bindsym m exec "maps.sh", mode "default"
+  bindsym f exec "figma-run", mode "default"
+  bindsym n exec "ankivim.sh", mode "default"
+  bindsym c exec "hyprpicker | wl-copy", mode "default"
+
+  bindsym Return mode "default"; exec mode "default"
+  bindsym Escape mode "default"; exec mode "default"
+}
+
+# layout
+mode "layout" {
+  bindsym t layout tabbed, mode "default"
+  bindsym s layout stacking, mode "default"
+  bindsym o layout toggle splitv tabbed, mode "default"
+  bindsym v splitv, mode "default"
+  bindsym b splith, mode "default"
+
+  bindsym Return mode "default"
+  bindsym Escape mode "default"
+}
+
+mode "screenshot" {
+  bindsym r exec "swayshot region", mode "default"
+  bindsym e exec "swayshot edit", mode "default"
+  bindsym s exec "swayshot", mode "default"
+  bindsym h exec "swayshot mon HDMI-A-2", mode "default"
+  bindsym l exec "swayshot mon VGA-1", mode "default"
+
+  bindsym Return mode "default"
+  bindsym Escape mode "default"
+}
+
+mode "gif_record" {
+  bindsym h exec "regif HDMI-A-2 8", mode "default"
+  bindsym l exec "regif VGA-1 8", mode "default"
+  bindsym r exec "regif region 8", mode "default"
+
+  bindsym Return mode "default"
+  bindsym Escape mode "default"
+}
+
+mode "workspaces" {
+  # MBW
+  bindsym w exec "swaysome w", mode "default"
+  bindsym g exec "swaysome g", mode "default"
+  bindsym a exec "swaysome a", mode "default"
+
+  bindsym Return mode "default"
+  bindsym Escape mode "default"
+}
+
+mode "move_workspaces" {
+  # MBW
+  bindsym w exec "swaysome move w", mode 'default'
+  bindsym g exec "swaysome move g", mode 'default'
+  bindsym a exec "swaysome move a", mode 'default'
+
+  bindsym Return mode 'default'
+  bindsym Escape mode 'default'
+}
+
+mode "movein_workspaces" {
+  # MBW
+  bindsym w exec "swaysome move_in w", mode 'default'
+  bindsym g exec "swaysome move_in g", mode 'default'
+  bindsym a exec "swaysome move_in a", mode 'default'
+
+  bindsym Return mode 'default'
+  bindsym Escape mode 'default'
+}
+
+mode "scratchpad" {
+  # MBS
+  bindsym c exec "swaypad -n 'calculator' -p 'top_left' -w 0.50 -h 0.30 -c 'foot -a calculator -e python -q'", mode "default"
+
+  bindsym r exec "swaypad.py -s sm -p 'top' -c 'foot -a countdown -e countdown.py' -n 'countdown'", mode "default"
+
+  bindsym h exec 'swaypad  -n "habits" -c "foot -a habits -e nvim /home/digo/.notes/habits.norg" -w 0.90 -h 0.90 -p center', mode "default"
+
+  bindsym n exec 'swaypad  -n "notes" -c "foot -a notes -e nvim /home/digo/.notes/index.norg" -w 0.90 -h 0.90 -p center', mode "default"
+
+  bindsym b exec 'swaypad -n "monitor" -c "foot -a monitor -e btop" -w 0.90 -h 0.90 -p center', mode "default"
+  bindsym m exec 'swaypad -C "com.github.th_ch.youtube_music" -c "youtube-music" -w 0.90 -h 0.90 -p center', mode "default"
+
+  bindsym w exec 'swaypad -n "com.rtosta.zapzap" -c "zapzap" -w 0.90 -h 0.90 -p center', mode "default"
+
+  bindsym t exec 'swaypad -n "todo" -c "foot -a todo -e taskwarrior-tui" -w 0.40 -h 0.80 -p top_left', mode "default"
+
+  bindsym i exec 'swaypad -n "ai" -c "foot -a ai -e aichat" -w 0.40 -h 0.96 -p top_right', mode "default"
+
+  bindsym u exec 'swaypad -n "dropdown" -c "foot -a dropdown -e zellij attach --create scratch" -w 0.90 -h 0.40 -p top', mode "default"
+
+  bindsym Return mode "default"
+  bindsym Escape mode "default"
+}
+
+mode "volume" {
+  bindsym l exec "volume.sh up", mode "default"
+  bindsym h exec "volume.sh down", mode "default"
+  bindsym k exec "volume.sh up_slow", mode "default"
+  bindsym j exec "volume.sh down_slow", mode "default"
+
+  bindsym Return mode "default"
+  bindsym Escape mode "default"
+}
+
+mode "resize" {
+  bindsym $left resize shrink width 10px
+  bindsym $down resize grow height 10px
+  bindsym $up resize shrink height 10px
+  bindsym $right resize grow width 10px
+
+  bindsym Return mode "default"
+  bindsym Escape mode "default"
+}
+
+# MOBI
+bindsym $mod+s mode "scratchpad"; exec mode "default"
+bindsym $mod+w mode "workspaces"; exec mode "default"
+bindsym $mod+Shift+w mode "move_workspaces"; exec mode "default"
+bindsym $mod+Ctrl+w mode "movein_workspaces"; exec mode "default"
+bindsym $mod+e mode "exec"; exec mode "default"
+bindsym $mod+a mode "action"; exec mode "default"
+bindsym $mod+y mode "layout"; exec mode "default"
+bindsym $mod+r mode "resize"; exec mode "default"
+bindsym $mod+v mode "volume"; exec mode "default"
+bindsym $mod+b mode "bar"; exec mode "default"
+
+# rules
+#for_window [class="^com.github.th_ch.youtube_music$"] move to workspace 5
+for_window [title="Open file"] resize set width 900, resize set height 500
+for_window [app_id="^xdg-desktop-portal-gtk$"] resize set width 900, resize set height 500
+for_window [app_id="yad"] floating enable, resize set 100, move position 30 30
+for_window [app_id="imv"] floating enable, resize set 700
+for_window [app_id="com.example.App"] floating enable, resize set 700
+for_window [class="^Firefox$"] inhibit_idle fullscreen
+for_window [app_id="^firefox$"] inhibit_idle fullscreen
+for_window [app_id="^brave-browser$"] move to workspace 4
+for_window [app_id="it.catboy.ripdrag"] move position 850 10
+
+# Read `man 5 sway-bar` for more information about this section.
+#bar swaybar_command waybar
+
+# import
+include /etc/sway/config.d/*
+include ~/.config/sway/rules.conf
