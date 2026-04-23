@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+MANGOHUD=1 gamescope -b -W 1280 -H 1024 -e -- steam

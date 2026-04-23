@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+PIC_PATH="$HOME/.pictures"
+if ! [[ -d "$PIC_PATH" ]]; then
+  mkdir "$PIC_PATH"
+  echo "Pictures folder was created"
+fi
+
+if [[ "$1" == "region" ]]; then
+  maim -s "$PIC_PATH/ps_$(date +'%Y%m%d%H%M%S').jpg" && notify-send "Region screenshot was taken!"
+elif [[ "$1" == "zoom" ]]; then
+  TMP=$(mktemp).png
+  maim -s "$TMP"
+  convert "$TMP" -resize 200% -filter Mitchell "$TMP"
+  imv -u nearest_neighbour "$TMP"
+  rm "$TMP"
+elif [[ "$1" == "mon" ]]; then
+  MON_GEOM=$(xrandr | grep -w "$2" | grep -oP '\d+x\d+\+\d+\+\d+')
+  if [[ -z "$MON_GEOM" ]]; then
+    notify-send "Monitor $2 not found"
+    exit 1
+  fi
+  maim -g "$MON_GEOM" "$PIC_PATH/ps_$2_$(date +'%Y%m%d%H%M%S').jpg" && notify-send "Screenshot on monitor $2 was taken"
+elif [[ "$1" == "edit" ]]; then
+  TMP=$(mktemp).png
+  maim -s "$TMP"
+  swappy -f "$TMP"
+  rm "$TMP"
+else
+  maim "$PIC_PATH/ps_$(date +'%Y%m%d%H%M%S').png" && notify-send "Full screenshot was taken!"
+fi

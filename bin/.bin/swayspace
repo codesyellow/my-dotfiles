@@ -1,0 +1,111 @@
+#!/usr/bin/env bash
+# Get focused output name
+monitor=$(swaymsg -t get_workspaces | jq -r '.[] | select(.focused).output')
+log_path=/tmp/"$monitor"_log
+
+# register last visited workspace for current monitor
+last_workspace() {
+  if [[ "$monitor" == "HDMI-A-2" ]]; then
+    if [[ ! -e "$log_path" ]]; then
+      touch $log_path
+    else
+      last_visited=$(cat $log_path)
+      echo "$last_visited"
+      echo "$1"
+      if [[ "$last_visited" != "$1" ]]; then
+        echo "logging to file"
+        echo "$1" >$log_path
+      else
+        echo "no"
+      fi
+    fi
+  fi
+}
+
+last_workspace $1
+
+exit 0
+
+# Get focused output name
+monitor=$(swaymsg -t get_workspaces | jq -r '.[] | select(.focused).output')
+log_path=/tmp/"$monitor"_log
+
+# Define workspace mappings
+declare -A workspace_secondary=(
+  [w]="1"
+  [g]="2"
+  [a]="3"
+)
+
+declare -A workspace_primary=(
+  [w]="4"
+  [g]="5"
+  [a]="6"
+)
+
+# Helper to get workspace based on monitor
+get_workspace() {
+  local side=$1 # primary or secondary
+  local key=$2
+  if [[ $side == "primary" ]]; then
+    echo "${workspace_primary[$key]}"
+  else
+    echo "${workspace_secondary[$key]}"
+  fi
+}
+
+# Define your primary output name (you can customize this)
+PRIMARY_OUTPUT="HDMI-A-2" # Change this according to `swaymsg -t get_outputs`
+
+# Determine current/target side
+if [[ "$monitor" == "$PRIMARY_OUTPUT" ]]; then
+  current_side="primary"
+  opposite_side="secondary"
+else
+  current_side="secondary"
+  opposite_side="primary"
+fi
+
+# register last visited workspace for current monitor
+last_workspace() {
+  if [[ "$monitor" == "HDMI-A-2" ]]; then
+    if [[ ! -e "$log_path" ]]; then
+      touch $log_path
+    else
+      visited_workspace=$(cat "$log_path")
+      echo "$visited_workspace"
+      echo "$wks" >$log_path
+    fi
+  fi
+}
+
+last_workspace
+# go back to the last visited workspace for current monitor
+back_and_forth() {
+  echo oi
+}
+
+# Main logic
+case "$1" in
+move)
+  wks=$(get_workspace "$current_side" "$2")
+  swaymsg move container to workspace "$wks"
+  ;;
+move_in)
+  wks=$(get_workspace "$opposite_side" "$2")
+  swaymsg move container to workspace "$wks"
+  ;;
+back)
+  # check if file exist and if current workspace is !=
+  wks=$(cat $log_path)
+  echo "$wks"
+  swaymsg workspace "$wks"
+  ;;
+*)
+  wks=$(get_workspace "$current_side" "$1")
+  swaymsg workspace "$wks"
+  echo "$wks"
+  echo "$(cat $log_path)"
+  echo "$wks" >$log_path
+  ;;
+esac

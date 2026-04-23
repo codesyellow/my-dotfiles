@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+# Uso: sudo ./mouse_move_right_ydotool.sh <distância_em_pixels>
+
+DIST=$1
+[ -z "$DIST" ] && echo "Uso: $0 <distância>" && exit 1
+
+STEPS=100
+STEP_SIZE=$((DIST / STEPS))
+
+for ((i = 1; i <= STEPS; i++)); do
+  ydotool mousemove $STEP_SIZE 0
+  sleep 0.005 # Ajuste para controlar velocidade
+done

@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+function check_dependencies() {
+  local ret=0
+  for cmd in "$@"; do
+    if ! command -v "$cmd" >/dev/null 2>&1; then
+      echo "Missing dependency: $cmd."
+      ret=1
+    fi
+  done
+  return $ret
+}
+
+(check_dependencies "magick" "grim" "tesseract" "wl-copy") || exit 1
+
+grim -g "$(slurp)" - | \
+magick - -colorspace gray -contrast-stretch 1%x99% -resize 200% TIFF:- | \
+tesseract - - -l por+eng | \
+wl-copy && notify-send "OCR" "Texto copiado para o clipboard!"

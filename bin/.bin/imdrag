@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+
+TEMP_DIR="$HOME/.drag_dir"
+IMAGE_LIMIT=10
+declare -A FILTERED_IMAGES
+
+# cria temp se não existir
+if [ ! -d "$TEMP_DIR" ]; then
+  mkdir -p "$TEMP_DIR"
+  echo "directory was created!"
+fi
+
+# pegar últimos X arquivos de cada diretório
+function filtered_list() {
+  shopt -s nullglob
+  for dir in "$@"; do
+    # pega os últimos IMAGE_LIMIT modificados no diretório
+    mapfile -t files < <(find "$dir" -maxdepth 1 -type f \
+      \( -iname '*.jpg' -o -iname '*.png' -o -iname '*.gif' -o -iname '*.webp' -o -iname '*.svg' \) \
+      -printf '%T@ %p\n' 2>/dev/null | sort -nr | head -n "$IMAGE_LIMIT" | awk '{ $1=""; sub(/^ /,""); print }')
+
+    for f in "${files[@]}"; do
+      [ -f "$f" ] || continue
+      ts=$(stat -c %Y "$f" 2>/dev/null) || continue
+      FILTERED_IMAGES[$ts]="$f"
+    done
+  done
+}
+
+# ordenar e copiar para o temp
+function move_images() {
+  sorted_keys=($(printf "%s\n" "${!FILTERED_IMAGES[@]}" | sort -nr))
+  i=1
+  for key in "${sorted_keys[@]}"; do
+    original="${FILTERED_IMAGES[$key]}"
+    filename="$(basename "$original")"
+    new_name=$(printf "%03d_%s" "$i" "$filename")
+    cp -p -- "$original" "$TEMP_DIR/$new_name"
+    ((i++))
+  done
+}
+
+# checar dependências
+function check_dependencies() {
+  local ret=0
+  for cmd in "$@"; do
+    if ! command -v "$cmd" >/dev/null 2>&1; then
+      echo "Missing dependency: $cmd."
+      ret=1
+    fi
+  done
+  return $ret
+}
+
+(check_dependencies "ripdrag") || exit 1
+
+filtered_list "$@"
+move_images
+
+ripdrag -n -i -s 400 -H 500 "$TEMP_DIR"/*
+
+if [ -d "$TEMP_DIR" ]; then
+  rm -rf "$TEMP_DIR"
+  echo "directory was deleted!"
+fi

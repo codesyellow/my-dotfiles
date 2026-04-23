@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# a script made to automatically fullscreen the window that was previously fullscreen until the scratchpad was opened. For this to work, the window id needs to exist inside the window_id_path file. This id is writed to that file by using swaypad script automatically.
+window_id_path="/tmp/prev_fullscreen_window_id"
+while [[ true ]]; do
+  swaymsg -t subscribe '[ "window" ]' | while read -r line; do
+    if [[ -e "$window_id_path" ]]; then
+      window_id=$(cat $window_id_path)
+      echo "Maximizing $window_id"
+      is_window_scratch=$(swaymsg -t get_tree | jq -r '
+        .. | objects | select(.focused == true) .scratchpad_state
+        ')
+      if [[ "$is_window_scratch" != "fresh" ]]; then
+        swaymsg "[con_id=$window_id] fullscreen enable"
+        rm $window_id_path
+      fi
+    fi
+  done
+  sleep 0.3
+done

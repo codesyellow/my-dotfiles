@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+for cmd in niri jq systemd-inhibit; do
+    if ! command -v "$cmd" &> /dev/null; then
+        echo "Erro: $cmd não está instalado." >&2
+        exit 1
+    fi
+done
+
+idle_state=0
+CAFFEINE_PID=""
+
+cleanup() {
+    echo "Cleaning up before leaving..."
+    [[ -n "$CAFFEINE_PID" ]] && kill "$CAFFEINE_PID" 2>/dev/null
+    exit 0
+}
+
+trap cleanup SIGINT SIGTERM
+
+while true; do
+    outputs=$(niri msg --json outputs)
+    windows=$(niri msg --json windows)
+
+    focused_monitor=$(echo "$outputs" | jq -r '.[] | select(.is_focused) | "\(.logical.width)x\(.logical.height)"')
+    
+    focused_window=$(echo "$windows" | jq -r '.[] | select(.is_focused) | "\(.layout.window_size[0])x\(.layout.window_size[1])"')
+
+    if [[ "$focused_monitor" == "$focused_window" && -n "$focused_window" ]]; then
+        if [[ "$idle_state" -eq 0 ]]; then
+            idle_state=1
+            systemd-inhibit --what=idle --who=Caffeine --why="Window in Fullscreen" --mode=block sleep infinity &
+            CAFFEINE_PID=$!
+            echo "[$(date +%T)] Inibindo idle: Janela em tela cheia detectada."
+        fi
+    else
+        if [[ "$idle_state" -eq 1 ]]; then
+            idle_state=0
+            if [[ -n "$CAFFEINE_PID" ]]; then
+                kill "$CAFFEINE_PID" 2>/dev/null
+                wait "$CAFFEINE_PID" 2>/dev/null
+            fi
+            echo "[$(date +%T)] Permitindo idle: Nenhuma janela em tela cheia."
+        fi
+    fi
+
+    sleep 3
+done

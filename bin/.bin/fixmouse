@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Move monitor away
+swaymsg output VGA-1 pos 2888 0
+
+# Launch game (Steam runtime does this)
+"$@"
+
+# Wait for game to exit
+while pgrep -f "game_binary_name" >/dev/null; do sleep 1; done
+
+# Restore monitor
+swaymsg output VGA-1 pos 1280 0

@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+
+MONITOR=$1
+TIME=$2
+PIC_PATH="$HOME/.pictures"
+
+mkdir -p "$PIC_PATH"
+
+function check_dependencies() {
+  local ret=0
+  for cmd in "$@"; do
+    ! command -v "$cmd" >/dev/null && echo "Missing dependency: $cmd." && ret=1
+  done
+  return $ret
+}
+
+(check_dependencies "ffmpeg" "gifsicle" "notify-send" "xrandr" "slop") || exit 1
+
+generate_gif() {
+  local input="$1"
+  local output="$2"
+  ffmpeg -i "$input" -vf "fps=10,scale=640:-1:flags=lanczos" -y "$output"
+  gifsicle -O3 "$output" -o "$output" # Optimize GIF size
+}
+
+record_monitor() {
+  local monitor="$MONITOR"
+  local line=$(xrandr | grep "^$monitor connected")
+
+  if [[ -z "$line" ]]; then
+    echo "Monitor '$monitor' not found or not connected"
+    exit 1
+  fi
+
+  # Extract geometry using regex
+  local res_offset=$(echo "$line" | grep -oP '\d+x\d+\+\d+\+\d+')
+  if [[ -z "$res_offset" ]]; then
+    echo "Could not determine geometry for monitor $monitor"
+    exit 1
+  fi
+
+  local resolution=${res_offset%%+*}
+  local offset="+${res_offset#*+}"
+
+  local raw="$PIC_PATH/raw_$(date +'%Y%m%d%H%M%S').mkv"
+  local gif="$PIC_PATH/recording_$(date +'%Y%m%d%H%M%S').gif"
+
+  ffmpeg -y -video_size "$resolution" -framerate 10 -f x11grab -i "$DISPLAY$offset" -t "$TIME" "$raw"
+  generate_gif "$raw" "$gif"
+  rm "$raw"
+  notify-send "$monitor was recorded"
+}
+
+record_region() {
+  local region=$(slop -f "%x %y %w %h")
+  read -r X Y W H <<<"$region"
+
+  local raw="$PIC_PATH/raw_$(date +'%Y%m%d%H%M%S').mkv"
+  local gif="$PIC_PATH/recording_$(date +'%Y%m%d%H%M%S').gif"
+
+  ffmpeg -y -video_size "${W}x${H}" -framerate 10 -f x11grab -i "$DISPLAY+$X,$Y" -t "$TIME" "$raw"
+  generate_gif "$raw" "$gif"
+  rm "$raw"
+  notify-send "Region was recorded"
+}
+
+if [[ "$1" == "region" ]]; then
+  record_region
+else
+  record_monitor "$MONITOR"
+fi

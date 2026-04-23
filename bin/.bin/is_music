@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+state=0
+volume=""
+
+while true; do
+  lowfi_status=$(playerctl -p lowfi status 2>/dev/null)
+  cmus_status=$(playerctl -p cmus status 2>/dev/null)
+  youtube_status=$(playerctl -p YoutubeMusic status 2>/dev/null)
+
+  if [[ $lowfi_status == "Playing" || $cmus_status == "Playing" || $youtube_status == "Playing" ]]; then
+    if [[ $state == 0 ]]; then
+      echo "playing"
+      volume=$(pamixer --get-volume)
+      easyeffects -l "HeavyBass"
+      echo "Bass" >~/.config/easyeffects_preset
+      pkill -RTMIN+3 waybar
+      state=1
+    fi
+  else
+    if { pgrep -f lowfi >/dev/null || pgrep -f cmus >/dev/null || pgrep -f "youtube-music" >/dev/null; } && [[ $state == 1 ]]; then
+      echo "paused"
+      pamixer --set-volume "$volume"
+      easyeffects -l "LoudnessEqualizer"
+      echo "LoudnessEqualizer" >~/.config/easyeffects_preset
+      pkill -RTMIN+3 waybar
+      state=0
+    fi
+  fi
+
+  sleep 1
+done

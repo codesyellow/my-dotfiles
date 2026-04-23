@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+# Uso: ./mouse_move_right.sh <distância_em_pixels>
+# Exemplo: ./mouse_move_right.sh 300
+
+DIST=$1
+[ -z "$DIST" ] && echo "Uso: $0 <distância>" && exit 1
+
+# Pegando a resolução da tela
+eval "$(xdotool getdisplaygeometry --shell)"  # retorna WIDTH e HEIGHT
+
+# Calculando centro da tela
+CENTER_X=$((WIDTH / 2))
+CENTER_Y=$((HEIGHT / 2))
+
+# Começando do centro
+xdotool mousemove $CENTER_X $CENTER_Y
+
+# Espera curta antes de começar
+sleep 0.2
+
+# Movimento gradual
+STEPS=100
+STEP_SIZE=$((DIST / STEPS))
+
+for ((i = 1; i <= STEPS; i++)); do
+    NEW_X=$((CENTER_X + i * STEP_SIZE))
+    xdotool mousemove $NEW_X $CENTER_Y
+    sleep 0.005  # Ajuste isso para controlar a velocidade
+done
+

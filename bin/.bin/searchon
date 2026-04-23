@@ -1,0 +1,13 @@
+#!/bin/bash
+MENU="wmenu"
+
+QUERY=$($MENU -p "Search on Google" < /dev/null)
+
+if [ -z "$QUERY" ]; then
+    exit 0
+fi
+
+SEARCH_URL="https://www.google.com/search?q=${QUERY// /+}"
+
+xdg-open "$SEARCH_URL"
+

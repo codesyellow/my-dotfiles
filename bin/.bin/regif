@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+
+MODE="$1"      # screen | region
+TIME="${2:-5}" # duração padrão: 5s
+PIC_PATH="$HOME/.pictures"
+
+mkdir -p "$PIC_PATH"
+
+check_dependencies() {
+  for cmd in "$@"; do
+    command -v "$cmd" &>/dev/null || {
+      echo "Missing dependency: $cmd"
+      exit 1
+    }
+  done
+}
+
+check_dependencies dunstify ffmpeg slurp gpu-screen-recorder
+
+timestamp=$(date +'%Y%m%d%H%M%S')
+video_file="$PIC_PATH/record-$timestamp.mp4"
+gif_file="$PIC_PATH/record-$timestamp.gif"
+
+record_screen() {
+  gpu-screen-recorder \
+    -w screen \
+    -f 60 \
+    -o "$video_file" &
+}
+
+record_region() {
+  region=$(slurp -f "%wx%h+%x+%y")
+  [[ -z "$region" ]] && exit 1
+
+  gpu-screen-recorder \
+    -w region \
+    -region "$region" \
+    -f 30 \
+    -o "$video_file" &
+}
+
+convert_to_gif() {
+  dunstify "Convertendo para GIF (Otimizado)..."
+
+  # Definimos variáveis para facilitar o ajuste
+  FPS=10
+  WIDTH=600  # Reduzir de 960 para 600 ajuda muito no tamanho
+  
+  # O segredo do FFmpeg para GIFs leves e bonitos é gerar uma paleta personalizada
+  # para cada vídeo antes de converter.
+  ffmpeg -y -i "$video_file" \
+    -vf "fps=$FPS,scale=$WIDTH:-1:flags=lanczos,palettegen" \
+    "$PIC_PATH/palette.png"
+
+  ffmpeg -y -i "$video_file" -i "$PIC_PATH/palette.png" \
+    -filter_complex "fps=$FPS,scale=$WIDTH:-1:flags=lanczos[x];[x][1:v]paletteuse=dither=sierra2_4a" \
+    "$gif_file"
+
+  rm "$video_file" "$PIC_PATH/palette.png"
+  dunstify "GIF salvo" "$gif_file"
+}
+
+case "$MODE" in
+region)
+  record_region
+  ;;
+*)
+  record_screen
+  ;;
+esac
+
+pid=$!
+sleep "$TIME"
+kill -SIGINT "$pid"
+wait "$pid" 2>/dev/null
+
+convert_to_gif

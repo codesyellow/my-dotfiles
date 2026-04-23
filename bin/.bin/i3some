@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+monitor=$(i3-msg -t get_tree | jq -r '.. | objects | select(.focused? == true).output')
+
+# Define workspace mappings
+declare -A workspace_primary=(
+  [w]="1"
+  [g]="2"
+  [a]="3"
+)
+
+declare -A workspace_secondary=(
+  [w]="4"
+  [g]="5"
+  [a]="6"
+)
+
+# Helper to get workspace based on monitor
+get_workspace() {
+  local side=$1 # primary or secondary
+  local key=$2
+  if [[ $side == "primary" ]]; then
+    echo "${workspace_primary[$key]}"
+  else
+    echo "${workspace_secondary[$key]}"
+  fi
+}
+
+# Determine current/target side
+if [[ "$monitor" == "VGA1" ]]; then
+  current_side="primary"
+  opposite_side="secondary"
+else
+  current_side="secondary"
+  opposite_side="primary"
+fi
+
+# Main logic
+case "$1" in
+move)
+  wks=$(get_workspace "$current_side" "$2")
+  i3-msg move container to workspace "$wks"
+  ;;
+move_in)
+  wks=$(get_workspace "$opposite_side" "$2")
+  i3-msg move container to workspace "$wks"
+  ;;
+*)
+  wks=$(get_workspace "$current_side" "$1")
+  i3-msg workspace "$wks"
+  ;;
+esac

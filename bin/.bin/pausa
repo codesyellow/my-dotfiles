@@ -1,0 +1,97 @@
+#!/usr/bin/env bash
+
+how_long=0
+active_counter=0
+inactive_counter=0
+break_counter=0
+no_activity=false
+no_activity_rounds=0
+
+display_help() {
+  echo "options:
+  -h, --help  show this help message and exit
+  -a,      this will be the time of activity that will trigger the break
+  -i       this is after how long that activity variable should be reseted to 0
+  -b       this will be the break interval number"
+}
+
+# Parse command-line options
+while getopts ":a:i:b:" opt; do
+  case ${opt} in
+  a)
+    how_long=$OPTARG
+    ;;
+  i)
+    inactive_counter=$OPTARG
+    ;;
+  b)
+    break_counter=$OPTARG
+    ;;
+  h)
+    display_help
+    exit 0
+    ;;
+  \?)
+    echo "Invalid option: -$OPTARG" >&2
+    display_help
+    exit 1
+    ;;
+  :)
+    echo "Option -$OPTARG requires an argument." >&2
+    display_help
+    exit 1
+    ;;
+  esac
+done
+
+if [[ "$how_long" == 0 ]] || [[ "$inactive_counter" == 0 ]] || [[ "$break_counter" == 0 ]]; then
+  echo "Default values will be used. If you want to change those values, use -h. 
+        All values are required!"
+  how_long=300
+  inactive_counter=60
+  break_counter=20
+fi
+
+notify() {
+  notify-send.sh -t 1500 -i ~/.local/share/icons/eye_${1}.png "$2"
+}
+
+while true; do
+  idle_time=$(xprintidle)
+  if [[ "$idle_time" -le 1000 ]]; then
+    if [[ "$inactive_counter" != 60 ]]; then
+      inactive_counter=60
+    fi
+    if [[ "$active_counter" == "$how_long" ]]; then
+      notify-send.sh "Take a break!"
+      canberra-gtk-play -f /usr/share/sounds/Smooth/stereo/menu-popup.oga
+      sleep $break_counter
+      active_counter=0
+      notify-send.sh "Break Ended!"
+      canberra-gtk-play -f /usr/share/sounds/Smooth/stereo/menu-popdown.oga
+    fi
+    ((active_counter++))
+
+    if [[ "$no_activity" == true ]]; then
+      no_activity=false
+      echo "actitivy was detected, so inactive counter will start again"
+    fi
+    if [[ "$no_activity_rounds" != 0 ]]; then
+      no_activity_rounds=0
+    fi
+  else
+    if [[ "$no_activity" == "false" ]]; then
+      ((inactive_counter--))
+      if [[ "$inactive_counter" -le 0 ]]; then
+        inactive_counter=60
+        active_counter=0
+        ((no_activity_rounds++))
+        if [[ "$no_activity_rounds" -ge 2 ]]; then
+          no_activity=true
+          echo "stopping inactivity counter until activity is detected"
+        fi
+      fi
+    fi
+  fi
+  sleep 1
+done

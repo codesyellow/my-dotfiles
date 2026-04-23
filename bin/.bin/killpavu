@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+while [[ true ]]; do
+  pavu_pid=$(pidof pavucontrol)
+  if [[ -n "$pavu_pid" ]]; then
+    kill -9 "$pavu_pid"
+    echo "pavucontrol was killed"
+    break
+  fi
+  sleep 0.4
+done

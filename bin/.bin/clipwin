@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+win_name=$(xdotool getactivewindow getwindowname)
+
+echo "$win_name" | xclip -selection clipboard && notify-send -t 1500 'Window name was copied to clipboard'
+
+

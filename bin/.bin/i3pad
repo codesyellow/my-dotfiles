@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+
+current_monitor=$(i3-msg -t get_tree | jq -r '.. | objects | select(.focused? == true).output')
+
+declare -A sizes=(
+  [sm]='40%x20%'
+  [sml]='80%x40%'
+  [smv]='40%x80%'
+  [md]='60%x60%'
+  [mdl]='90%x60%'
+  [mdv]='60%x90%'
+  [big]='80%x80%'
+  [bigl]='90%x80%'
+  [lrg]='96%x96%'
+)
+
+declare -A pad=(
+  ["top-center"]="0,20"
+  ["top-left"]="20,20"
+  ["top-right"]="20,20"
+  ["center-right"]="-20,0"
+  ["center-center"]="0,0"
+  ["center-left"]="20,0"
+  ["bottom-center"]="0,-20"
+  ["bottom-left"]="20,-20"
+  ["bottom-right"]="20,-20"
+)
+
+declare -A pos=(
+  ["top-center"]="top"
+  ["top-left"]="top"
+  ["top-right"]="top"
+  ["center-right"]="right"
+  ["center-center"]="top"
+  ["center-left"]="left"
+  ["bottom-center"]="bottom"
+  ["bottom-left"]="left"
+  ["bottom-right"]="right"
+)
+
+# Input validation
+[[ -z "${sizes[$1]}" || -z "${pos[$2]}" || -z "${pad[$2]}" ]] && {
+  echo "Usage: $0 <size> <anchor> <command>"
+  echo "Example: $0 md top-right 'alacritty --class scratchpad'"
+  exit 1
+}
+
+scratchsize="${sizes[$1]}"
+animate_from="${pos[$2]}"
+anchor="$2"
+scratchpad="${pad[$2]}"
+cmd="$3"
+
+# Final command
+i3-scratchpad -t -m bottom -a "$anchor" -p "$scratchpad" -d "$scratchsize" -s "$current_monitor" "$cmd"

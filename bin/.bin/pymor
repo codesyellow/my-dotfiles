@@ -1,0 +1,96 @@
+#!/usr/bin/env bash
+
+pomodoro_time=0
+free_minutes=0
+break_out=false
+pomodoro_path="/tmp/pomodoro_time"
+free_time=false
+
+notify-pymor() {
+    local arg="$1"
+    if [[ "$2" == "critical" ]]; then
+        notify-send -i ~/.local/share/icons/pomodoro_${arg}_32.png -u critical --replace-id=10 "$3"
+        canberra-gtk-play -f /usr/share/sounds/Smooth/stereo/dialog-warning.oga
+    else
+        notify-send -i ~/.local/share/icons/pomodoro_${arg}_32.png --replace-id=10 "$2"
+    fi
+}
+
+if [[ -f "$pomodoro_path" ]]; then
+    echo "Pymor is still running in the background. Close it or wait until is finishes before starting a new process."
+    notify-pymor "start" "Pymor is running!"
+    exit 1
+fi
+
+display_help() {
+    echo "options:
+  -h, --help  show this help message and exit
+  -t       Your pomodoro minutes
+  -f       Set this if you need a few minutes within your pomodoro to do something
+  -c       This is used for canceling a running instance. It requires no arguments after -c"
+}
+
+# Parse command-line options
+while getopts ":t:f:c:h" opt; do
+    case ${opt} in
+    t)
+        pomodoro_time=$OPTARG
+        ;;
+    f)
+        free_minutes=$OPTARG
+        ;;
+    c)
+        break_out=$OPTARG
+        ;;
+    h)
+        display_help
+        exit 0
+        ;;
+    \?)
+        echo "Invalid option: -$OPTARG" >&2
+        display_help
+        exit 1
+        ;;
+    :)
+        echo "Option -$OPTARG requires an argument." >&2
+        display_help
+        exit 1
+        ;;
+    esac
+done
+
+if [[ "$pomodoro_time" == "0" ]]; then
+    pomodoro_time=25
+fi
+
+if [[ ! "$free_minutes" == "0" ]]; then
+    free_time=true
+fi
+
+original_time=$pomodoro_time
+
+while [[ "$pomodoro_time" -ge 0 ]]; do
+    if [[ "$pomodoro_time" == $original_time ]]; then
+        notify-pymor "start" "Pomodoro"
+    fi
+
+    ((pomodoro_time--))
+    echo "$pomodoro_time" >"$pomodoro_path"
+    if [[ $pomodoro_time == 0 ]]; then
+        notify-pymor "end" "critical" "Pomodoro ended!"
+        rm $pomodoro_path
+        break
+    fi
+
+    if [[ "$free_time" == "true" ]]; then
+        if [[ "$free_minutes" == "0" ]]; then
+            notify-pymor "free" "Back To work!"
+            free_time=false
+        else
+            ((free_minutes--))
+        fi
+    fi
+    sleep 60
+done
+
+echo "$pomodoro_time"

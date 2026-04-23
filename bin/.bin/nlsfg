@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+CONFIG_PATH=$HOME/.config/lsfg-vk/conf.toml
+CONFIG_PATH_BK=$HOME/.config/lsfg-vk/conf.toml.bak
+process_list=$(
+  for pid_path in /proc/[0-9]*; do
+    owner=$(stat -c %U "$pid_path" 2>/dev/null)
+    if [[ "$owner" == "$USER" ]]; then
+      if grep -qi 'vulkan' "$pid_path/maps" 2>/dev/null; then
+        procname=$(cat "$pid_path/comm" 2>/dev/null)
+        if [[ -n "$procname" ]]; then
+          printf "%s (PID: %s)\n" "$procname" "$(basename "$pid_path")"
+        fi
+      fi
+    fi
+  done
+)
+
+if [[ -z "$process_list" ]]; then
+  notify-send "LSFG" "The list was empty"
+  exit 1
+fi
+
+selection=$(echo "$process_list" | sort -u | wmenu -i -p "Process name:")
+
+if [[ -n "$selection" ]]; then
+  name_only=$(echo "$selection" | awk '{print $1}')
+  is_present=$(grep "$name_only" ~/.config/lsfg-vk/conf.toml)
+  if [[ -n "$is_present" ]]; then
+    echo "This game is already present at lsfg-vk config.toml"
+    exit 0
+  else
+
+read -r -d '' rule <<EOF
+[[game]]
+exe = "$name_only"
+multiplier = 2
+flow_scale = 1.0
+performance_mode = true
+hdr_mode = false
+experimental_present_mode = "fifo"
+EOF
+
+cp -r "$CONFIG_PATH" "$CONFIG_PATH_BK" &&
+printf "%s\n" "$rule" >> "$CONFIG_PATH"
+  fi
+    #    echo -n "$name_only" | wl-copy
+  #    notify-send "LSFG" "Name '$name_only' was added to the clipboard."
+fi

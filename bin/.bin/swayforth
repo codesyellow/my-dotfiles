@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+while true; do
+  swaymsg -t subscribe '["workspace"]' | while read -r line; do
+    monitor=$(swaymsg -t get_workspaces | jq -r '.[] | select(.focused).output')
+    current_wks=$(swaymsg -t get_workspaces | jq -r '.[] | select(.focused).name')
+    log_path=/tmp/"$monitor"_log
+    if [ "$(wc -l <"$log_path" 2>/dev/null || echo 0)" -lt 2 ]; then
+      echo "$current_wks" >>"$log_path"
+    else
+      tail -n 1 "$log_path" >"$log_path.tmp"
+      echo "$current_wks" >>"$log_path.tmp"
+      mv "$log_path.tmp" "$log_path"
+    fi
+  done
+done

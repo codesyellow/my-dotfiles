@@ -1,0 +1,20 @@
+#!/bin/bash
+
+lista_dispositivos=$(udiskie-info -a -o "{mount_path} [{device_presentation}]" | grep "^/")
+
+if [ -z "$lista_dispositivos" ]; then
+    notify-send "udiskie" "Nenhum dispositivo montado encontrado."
+    exit 0
+fi
+
+escolha_completa=$(echo "$lista_dispositivos" | wmenu -l 10 -p "Ejetar:")
+
+ponto_montagem=$(echo "$escolha_completa" | awk '{print $1}')
+
+if [ -n "$ponto_montagem" ]; then
+    if udiskie-umount "$ponto_montagem"; then
+        notify-send "udiskie" "Removido com segurança: $ponto_montagem"
+    else
+        notify-send "udiskie" "Falha ao remover: $ponto_montagem"
+    fi
+fi

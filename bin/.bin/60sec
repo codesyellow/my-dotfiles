@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+RE_PATH="/home/digo/.videos/channel/tests"
+notify_id=""
+
+function noty() {
+  notify_id=$(notify-send -p -u "critical" "$1")
+  sleep 3
+  dunstctl close "$notify_id"
+}
+
+# check if system has all the requirements
+function check_dependencies() {
+  local ret=0
+  for cmd in "$@"; do
+    ! command -v "$cmd" &>/dev/null && echo "Missing dependency: $cmd." && ret=1
+  done
+  return $ret
+}
+
+(check_dependencies "notify-send.sh" "gpu-screen-recorder" "dunst") || exit 1
+
+noty "Recording in 3 seconds..."
+
+if [ ! -d "$RE_PATH" ]; then
+  mkdir -p "$RE_PATH"
+  echo "Directory for storing recording was created!"
+fi
+
+get_unique_name() {
+  local dir="$RE_PATH"
+  local base=$(niri msg --json focused-window | jq -r '.title')
+  local name="${base}.mp4"
+  local count=1
+
+  while [[ -e "$dir/$name" ]]; do
+    name="${base}${count}.mp4"
+    ((count++))
+  done
+
+  echo "$base$count"
+}
+
+win_name=$(get_unique_name)
+
+echo "$win_name"
+gpu-screen-recorder -w DVI-D-1 -f 60 -o "/home/digo/.videos/channel/tests/$win_name.mp4" &
+sleep 3
+pkill -SIGINT -f gpu-screen-recorder
+noty "Recording was ended!"

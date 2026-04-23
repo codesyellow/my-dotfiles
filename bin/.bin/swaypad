@@ -1,0 +1,124 @@
+#!/usr/bin/env bash
+
+function check_dependencies() {
+  local ret=0
+  for cmd in "$@"; do
+    ! [ $(command -v $cmd) ] && echo "Missing dependency: $cmd." && ret=1
+  done
+  return $ret
+}
+
+(check_dependencies "bc" "swaymsg" "swayscratchfull") || exit 1
+
+while getopts "n:C:h:w:p:c:" opt; do
+  case "$opt" in
+  n) name="$OPTARG" ;;
+  C) class="$OPTARG" ;;
+  w) width="$OPTARG" ;;
+  h) height="$OPTARG" ;;
+  p) position="$OPTARG" ;;
+  c) command="$OPTARG" ;;
+  *)
+    echo "Use: $0 [-n name | -C class | -w with(percentage) -h height(percentage) -p position(top, top-left, top-right, center)] -c command"
+    exit 1
+    ;;
+  esac
+done
+
+if [[ -z "$command" ]]; then
+  echo "Err: -c (command) is required"
+  exit 1
+else
+  if [[ -z "$name" ]]; then
+    if [[ -z "$class" ]]; then
+      echo "Name or Class need to be passed as arguments"
+      exit 1
+    fi
+  fi
+fi
+
+# check if fullscreen scripts is running, if not, open it.
+if [[ -z $(ps -ef | grep 'bash' | grep "swayscratchfull") ]]; then
+  nohup swayscratchfull &
+fi
+
+# check if the window was fullscreen previous and, if so, send window info to file
+was_fullscreen=$(swaymsg -t get_tree | jq '.. | objects | select(.focused == true) | .fullscreen_mode')
+window_info=$(
+  swaymsg -t get_tree | jq -r '
+  .. | objects | select(.focused == true) .id
+'
+)
+if [[ "$was_fullscreen" == 1 ]]; then
+  echo $window_info >/tmp/prev_fullscreen_window_id
+fi
+
+function inactive_scratch() {
+  echo "opening scratchpad"
+  nohup $command &
+  sleep 0.4
+  while [[ true ]]; do
+    echo "trying to get window app_id"
+    is_floating=$(swaymsg -t get_tree | jq -r --arg name "$name" '.. | objects | select(.app_id == $name) | .scratchpad_state')
+    if [[ -z "$is_floating" ]]; then
+      echo "trying to get window class instead"
+      is_floating=$(swaymsg -t get_tree | jq -r --arg class "$class" '
+        .. | objects
+        | select(.window_properties?.class == $class)
+        | .scratchpad_state
+      ')
+    fi
+
+    if [[ "$is_floating" == "fresh" ]]; then
+      echo "exiting loop since scratchpad is already present."
+      break
+    else
+      swaymsg "[$match_info] move scratchpad"
+      sleep 0.2
+      swaymsg "[$match_info] resize set $resize_width $resize_height"
+      swaymsg "[$match_info] move position $position_set"
+      sleep 0.2
+      swaymsg "[$match_info] scratchpad show"
+    fi
+    sleep 0.1
+  done
+}
+
+# grab screen size and handle window calculation for what the app size should be.
+screen_height=$(swaymsg -t get_outputs | jq '.[] | select(.active) | .current_mode.height')
+screen_width=$(swaymsg -t get_outputs | jq '.[] | select(.active) | .current_mode.width')
+resize_width=$(echo $screen_width*$width | bc | cut -d'.' -f1)
+resize_height=$(echo $screen_height*$height | bc | cut -d'.' -f1)
+
+case "$position" in
+top)
+  x=$(((screen_width - resize_width) / 2))
+  position_set="$x 0"
+  ;;
+center)
+  x=$(((screen_width - resize_width) / 2))
+  y=$(((screen_height - resize_height) / 2))
+  position_set="$x $y"
+  ;;
+top_left)
+  position_set="0 0"
+  ;;
+top_right)
+  x=$(((screen_width - resize_width)))
+  position_set="$x 0"
+  ;;
+*)
+  echo "position does not exist."
+  ;;
+esac
+
+if [[ -z "$class" ]]; then
+  match_info=app_id="$name"
+else
+  match_info=class="$class"
+fi
+
+echo "resize values are: $resize_width $resize_height"
+swaymsg "[$match_info] resize set $resize_width $resize_height"
+swaymsg "[$match_info] move position $position_set"
+swaymsg "[$match_info] scratchpad show" || inactive_scratch

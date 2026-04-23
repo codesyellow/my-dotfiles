@@ -1,0 +1,32 @@
+#!/usr/bin/bash
+
+GAMEON_PATH="/tmp/gameon"
+state=0
+
+check_processes() {
+  for proc in "$@"; do
+    if ps -eo pid,cmd | grep -w "$proc" | grep -v grep >/dev/null; then
+      return 0
+    fi
+  done
+  return 1
+}
+
+while true; do
+  if check_processes "lutris-wrapper" "reaper"; then
+    if [[ "$state" == 0 ]]; then
+      touch "$GAMEON_PATH"
+      pkill -RTMIN+15 waybar
+      echo "enable updated waybar"
+      state=1
+    fi
+  else
+    if [[ "$state" == 1 ]]; then
+      state=0
+      rm -f "$GAMEON_PATH"
+      pkill -RTMIN+15 waybar
+      echo "disable and updated waybar"
+    fi
+  fi
+  sleep 1
+done

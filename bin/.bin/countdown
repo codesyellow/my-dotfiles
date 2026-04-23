@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+COUNTDOWN_PATH="/tmp/countdown_timer"
+if [[ ! -e "$COUNTDOWN_PATH" ]]; then
+  touch "$COUNTDOWN_PATH"
+  if [[ -n "$1" ]]; then
+    echo $1 >"$COUNTDOWN_PATH"
+  else
+    echo "25" >"$COUNTDOWN_PATH"
+  fi
+else
+  if [[ -n "$1" ]]; then
+    echo $1 >"$COUNTDOWN_PATH"
+  fi
+fi
+while [[ true ]]; do
+  cat $COUNTDOWN_PATH
+  if [[ $(cat "$COUNTDOWN_PATH") -ge 1 ]]; then
+    echo $(($(cat /tmp/countdown_timer) - 1)) >/tmp/countdown_timer
+    pkill -RTMIN+5 waybar
+    sleep 1
+  else
+    echo 25 >/tmp/countdown_timer
+    pkill -RTMIN+5 waybar
+    notify-send "Time is over"
+    break
+  fi
+done
