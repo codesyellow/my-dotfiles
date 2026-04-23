@@ -91,7 +91,6 @@ menu:
           - key: "L"
             desc: "Increase the width of the window"
             cmd: "niri msg action set-window-width '+20%'"
-
       - key: "r"
         desc: Runner
         cmd: |
@@ -99,6 +98,9 @@ menu:
       - key: "h"
         desc: Clipboard history
         cmd: cliphist list | rofi -dmenu | cliphist decode | wl-copy
+      - key: "k"
+        desc: Kill window
+        cmd: nirikill
       - key: "s"
         desc: Screenshot
         submenu:
