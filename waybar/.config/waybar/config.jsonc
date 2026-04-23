@@ -18,6 +18,9 @@
     "cpu",
     "memory",
     "temperature",
+    "disk",
+    "disk#home",
+    "disk#HDD",
     "niri/language",
     "custom/power"],
     "idle_inhibitor": {
@@ -39,6 +42,21 @@
     "timezone": "America/Sao_Paulo",
     "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
     "format": "{:%H:%M|%a-%d/%h}"
+  },
+  "disk": {
+      "interval": 30,
+      "format": "{free} ",
+      "path": "/"
+  },
+  "disk#home": {
+      "interval": 30,
+      "format": "{free} ",
+      "path": "/home"
+  },
+  "disk#HDD": {
+      "interval": 30,
+      "format": "{free} ",
+      "path": "/home/digo/.HDD"
   },
   "cpu": {
     "format": "{usage}% ",
@@ -63,7 +81,7 @@
       "signal": 5,
       "interval": "once",
 //      "on-click": "$HOME/.config/waybar/scripts/countdown_gui.sh",
-      "on-click-right": "kill $(cat /tmp/countdown_pid.pid)",
+      "on-click-right": "kill $(cat /tmp/countdown.lock)",
       "on-scroll-up": "",
       "menu": "on-click",
       "menu-file": "$HOME/.config/waybar/countdown_menu.xml", // Menu file in resources folder
@@ -126,7 +144,7 @@
     }
   },
   "niri/language": {
-    "format": "{} ",
+    "format": "{} 󰌌",
     "format-en": "US",
     "format-en-intl": "INTL",
     "on-click": "niri msg action switch-layout next",

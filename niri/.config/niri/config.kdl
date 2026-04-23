@@ -1,5 +1,6 @@
 // https://yalter.github.io/niri/Configuration:-Introduction
-spawn-at-startup "niriwake"
+//spawn-at-startup "niriwake"
+spawn-at-startup "caffeine.py"
 spawn-at-startup "dbus-update-activation-environment" "--systemd" "WAYLAND_DISPLAY" "XDG_CURRENT_DESKTOP" "PATH"
 
 // this is for scratchpad
@@ -221,7 +222,7 @@ binds {
   ISO_Level5_Shift+Ctrl+1 { move-column-to-workspace "mon-1"; }
   ISO_Level5_Shift+Ctrl+2 { move-column-to-workspace "mon-2"; }
 
-  ISO_Level5_Shift+W hotkey-overlay-title="Use Nirigo" { spawn "nirigo.py"; }
+  ISO_Level5_Shift+W hotkey-overlay-title="Use Nirigo" { spawn "nirigo"; }
   ISO_Level5_Shift+S hotkey-overlay-title="Scratchpads Keychords" { spawn-sh "wlr-which-key --initial-keys 's'"; }
   ISO_Level5_Shift+A hotkey-overlay-title="Action Keychords" { spawn-sh "wlr-which-key --initial-keys 'a'"; }
   ISO_Level5_Shift+E hotkey-overlay-title="Exec Keychords" { spawn-sh "wlr-which-key --initial-keys 'e'"; }
