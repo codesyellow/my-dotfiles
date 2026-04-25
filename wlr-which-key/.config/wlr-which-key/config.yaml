@@ -207,13 +207,16 @@ menu:
         cmd: nscratch.py -id IA -m -a || foot -a IA -T IA -e aichat -r quick-res
       - key: "t"
         desc: Todo
-        cmd: nscratch.py -id Kuro -m -a || kuro
+        cmd: nscratch.py -id taskwarrior -m -a || foot -a taskwarrior -T taskwarrior -e taskwarrior-tui
       - key: "b"
         desc: Monitor
         cmd: nscratch.py -id monitor -m -a || foot -a monitor -T monitor -e btop 
       - key: "n"
         desc: Notes
         cmd: nscratch.py -id notes -m -a || foot -a notes -T notes -e nvim --listen /tmp/neorg_server ~/.neorg/notes/index.norg
+      - key: "p"
+        desc: Termout
+        cmd: nscratch.py -id termout -m -a || foot -a termout -T termout -e termout 
       - key: "h"
         desc: Habits
         cmd: nscratch.py -id habits -m -a || foot -a notes -T habits -e nvim ~/.notes/habits.norg 

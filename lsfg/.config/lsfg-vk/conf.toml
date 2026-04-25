@@ -163,3 +163,11 @@ flow_scale = 1.0
 performance_mode = true
 hdr_mode = false
 experimental_present_mode = "fifo"
+
+[[game]]
+exe = "steep.exe"
+multiplier = 2
+flow_scale = 1.0
+performance_mode = true
+hdr_mode = false
+experimental_present_mode = "fifo"

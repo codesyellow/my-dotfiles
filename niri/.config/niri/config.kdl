@@ -156,7 +156,7 @@ window-rule {
 
 // top left
 window-rule {
-  match app-id=r#"^Kuro|todo$"#
+  match app-id=r#"^Kuro|todo|taskwarrior$"#
   open-on-workspace "scratch"
   open-floating true
   default-column-width { proportion 0.40; }
@@ -167,7 +167,7 @@ window-rule {
 
 // center
 window-rule {
-  match app-id=r#"^notes|monitor|habits|lowfi$"#
+  match app-id=r#"^notes|monitor|habits|lowfi|termout$"#
   open-on-workspace "scratch"
   open-floating true
   default-column-width { proportion 0.75; }
