@@ -190,33 +190,40 @@ menu:
       - key: "Return"
         desc: "Exit"
         cmd: ""
+
       - key: "u"
         desc: Dropdown
-        cmd: nscratch.py -id dropdown -m -a || alacritty -o window.opacity=0.7 --class dropdown --title dropdown
+       # cmd: nscratch.py -id dropdown -m -a || alacritty -o window.opacity=0.7 --class dropdown --title dropdown
+        cmd: niri-scratchpad target appid dropdown --spawn "alacritty -o window.opacity=0.7 --class dropdown --title dropdown"
+
       - key: "a"
         desc: AnkiVim
-        cmd: nscratch.py -id ankivim -m -a || foot -a ankivim --title ankivim -e anki_parser.py english.txt 
+        cmd: niri-scratchpad target appid ankivim --spawn "foot -a ankivim --title ankivim -e anki_parser.py english.txt" 
+
       - key: "l"
         desc: lowfi
-        cmd: nscratch.py -id lowfi -m -a || foot -a lowfi -T lowfi -e lowfi -p
+        cmd: niri-scratchpad target appid lowfi --spawn "foot -a lowfi -T lowfi -e lowfi -p"
+
       - key: "c"
         desc: Calculator
-        cmd: nscratch.py -id calculator -m -a || foot -a calculator -T calculator -e python3 -q
+        cmd: niri-scratchpad target appid calculator --spawn "foot -a calculator -T calculator -e python -q"
+
       - key: "i"
         desc: AI
-        cmd: nscratch.py -id IA -m -a || foot -a IA -T IA -e aichat -r quick-res
+        cmd: niri-scratchpad target appid aichat --spawn "foot -a aichat -T aichat -e aichat -r quick-res"
+
       - key: "t"
         desc: Todo
-        cmd: nscratch.py -id taskwarrior -m -a || foot -a taskwarrior -T taskwarrior -e taskwarrior-tui
+        cmd: niri-scratchpad target appid taskwarrior --spawn "foot -a taskwarrior -T taskwarrior -e taskwarrior-tui"
+
       - key: "b"
         desc: Monitor
-        cmd: nscratch.py -id monitor -m -a || foot -a monitor -T monitor -e btop 
+        cmd: niri-scratchpad target appid monitor --spawn "foot -a monitor -T monitor -e btop"
+
       - key: "n"
         desc: Notes
-        cmd: nscratch.py -id notes -m -a || foot -a notes -T notes -e nvim --listen /tmp/neorg_server ~/.neorg/notes/index.norg
+        cmd: niri-scratchpad target appid notes --spawn "foot -a notes -T notes -e nvim --listen /tmp/neorg_server ~/.neorg/notes/index.norg"
+
       - key: "p"
         desc: Termout
-        cmd: nscratch.py -id termout -m -a || foot -a termout -T termout -e termout 
-      - key: "h"
-        desc: Habits
-        cmd: nscratch.py -id habits -m -a || foot -a notes -T habits -e nvim ~/.notes/habits.norg 
+        cmd: niri-scratchpad target appid termout --spawn "foot -a termout -T termout -e termout"

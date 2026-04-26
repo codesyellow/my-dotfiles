@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+session=$(zellij list-sessions -n | rofi -dmenu -p "Zellij Sessions:")
+
+if [ -n "$session" ]; then
+  foot -e zellij attach "$session"
+fi

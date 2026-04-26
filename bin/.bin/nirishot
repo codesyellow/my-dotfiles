@@ -13,17 +13,14 @@ function check_dependencies() {
 
 (check_dependencies "niri" "slurp" "grim" "dunstify" "swappy") || exit 1
 
-# set the default path and also checks if that folder exists
 PIC_PATH="$HOME/.pictures"
 if ! [[ -d "$PIC_PATH" ]]; then
   mkdir "$PIC_PATH"
   echo "Pictures folder was created"
 fi
 
-# get current monitor name
 current_monitor=$(niri msg -j focused-output | jq -r '.name')
 
-# logic to create a name for the file
 if [[ -z "$1" ]]; then
   file_name="$PIC_PATH"/"$current_monitor"_$(date +'%Y%m%d%H%M%S').png
 else
@@ -31,14 +28,13 @@ else
 fi
 
 case "$1" in
-  region)
-    grim -g "$(slurp)" "$file_name" && dunstify "Region screenshot was saved"
-    ;;
-  edit)
-    grim -g "$(slurp)" - | swappy -f - && dunstify "An edited screenshot was saved"
-    ;;
-  *)
-    grim -o "$current_monitor" "$file_name" && dunstify "Screenshot was saved"
-    ;;
+region)
+  grim -g "$(slurp)" "$file_name" && dunstify "Region screenshot was saved"
+  ;;
+edit)
+  grim -g "$(slurp)" - | swappy -f - && dunstify "An edited screenshot was saved"
+  ;;
+*)
+  grim -o "$current_monitor" "$file_name" && dunstify "Screenshot was saved"
+  ;;
 esac
-

@@ -5,7 +5,6 @@ spawn-at-startup "dbus-update-activation-environment" "--systemd" "WAYLAND_DISPL
 
 // this is for scratchpad
 spawn-at-startup "alacritty -o window.opacity=0.7 --class dropdown --title dropdown"
-spawn-at-startup "kuro"
 spawn-at-startup "foot -a IA -T IA -e aichat -r quick-res"
 
 hotkey-overlay {
@@ -14,7 +13,7 @@ hotkey-overlay {
 
 prefer-no-csd
 screenshot-path "/home/digo/.pictures/"
-
+workspace "stash" { }
 // https://github.com/YaLTeR/niri/wiki/Configuration:-Named-Workspaces
 workspace "mon-1" {
   open-on-output "HDMI-A-1"
