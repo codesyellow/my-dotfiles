@@ -3,7 +3,7 @@ import subprocess
 import json
 from time import sleep
 
-SLEEP_TIME = 1
+SLEEP_TIME = 4
 
 
 class Caffeine:
