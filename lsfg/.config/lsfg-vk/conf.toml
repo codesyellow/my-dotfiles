@@ -155,7 +155,6 @@ performance_mode = true
 hdr_mode = false
 experimental_present_mode = "fifo"
 
-
 [[game]]
 exe = "RiseOfTheTombRa"
 multiplier = 2

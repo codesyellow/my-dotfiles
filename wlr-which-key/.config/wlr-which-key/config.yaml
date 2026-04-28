@@ -101,6 +101,9 @@ menu:
       - key: "k"
         desc: Kill window
         cmd: nirikill
+      - key: "o"
+        desc: "Lock"
+        cmd: "niri msg action power-off-monitors; swaylock -f"
       - key: "s"
         desc: Screenshot
         submenu:

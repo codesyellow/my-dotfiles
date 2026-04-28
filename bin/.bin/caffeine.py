@@ -3,14 +3,14 @@ import subprocess
 import json
 from time import sleep
 
-SLEEP_TIME = 5
+SLEEP_TIME = 1
 
 
 class Caffeine:
     """Prevents the systemd from going to sleep while focused window is fullscrened or an audio is being played."""
 
     def __init__(self) -> None:
-        pass
+        self.inhibit_proc = None
 
     def run(self) -> None:
         try:
@@ -20,18 +20,16 @@ class Caffeine:
 
     def _handle_logic(self) -> None:
         while True:
-            if not self._check_playerctl():
-                if self._is_fullscreen() and not self._is_caffeine_on():
-                    self._set_caffeine_status("start")
-                elif (
-                    not self._is_fullscreen()
-                    and self._is_caffeine_on()
-                    and not self.is_window_floating()
-                ):
-                    self._set_caffeine_status("stop")
-            else:
-                if not self._is_caffeine_on() and not self.is_window_floating():
-                    self._set_caffeine_status("start")
+            should_inhibit = (
+                self._check_playerctl()
+                or self._is_fullscreen()
+                and not self.is_window_floating()
+            )
+            if should_inhibit and not self._is_caffeine_on():
+                self._set_caffeine_status("start")
+            elif not should_inhibit and self._is_caffeine_on():
+                self._set_caffeine_status("stop")
+
             sleep(SLEEP_TIME)
 
     def _is_fullscreen(self) -> bool:
@@ -52,35 +50,28 @@ class Caffeine:
             return False
 
     def _set_caffeine_status(self, status) -> None:
-        try:
-            subprocess.run(
-                ["systemctl", "--user", f"{status}", "caffeine.service"], check=True
+        if status == "start" and self.inhibit_proc is None:
+            # Bloqueia idle, sleep e lide (tampa do note) enquanto o processo sleep durar
+            self.inhibit_proc = subprocess.Popen(
+                [
+                    "systemd-inhibit",
+                    "--what=idle:sleep:handle-lid-switch",
+                    "--who=Caffeine-Script",
+                    "--why=Fullscreen/Audio",
+                    "sleep",
+                    "infinity",
+                ]
             )
-            print(f"{status} the service")
-        except subprocess.CalledProcessError as e:
-            print(f"Unable to {status} the service: {e.stderr}")
+            print("Caffeine ativado")
+
+        elif status == "stop" and self.inhibit_proc is not None:
+            self.inhibit_proc.terminate()
+            self.inhibit_proc = None
+            print("Caffeine desativado")
 
     def _is_caffeine_on(self) -> bool:
         """Checks the ActiveState of a systemd service."""
-        try:
-            status = subprocess.run(
-                [
-                    "systemctl",
-                    "--user",
-                    "show",
-                    "caffeine",
-                    "-p",
-                    "ActiveState",
-                    "--value",
-                ],
-                capture_output=True,
-                text=True,
-                check=True,
-            ).stdout.strip()
-        except Exception:
-            return False
-        else:
-            return status == "active"
+        return self.inhibit_proc is not None
 
     def window_size(self) -> str:
         data = self.nirimsg("focused-window")

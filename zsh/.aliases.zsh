@@ -36,6 +36,10 @@ alias :see="systemctl --user enable"
 alias :seen="systemctl --user enable --now"
 alias :sed="systemctl --user daemon-reload"
 
+alias :ga="git add ."
+alias :gc="git commit"
+alias :gs="git status"
+
 # move
 alias :m3="mv ~/Downloads/*.mp3 ~/.music"
 

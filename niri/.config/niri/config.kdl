@@ -134,7 +134,6 @@ window-rule {
 
 window-rule {
   match app-id=r#"^dropdown|calculator$"#
-  open-on-workspace "scratch"
   open-floating true
   default-column-width { proportion 0.80; }
   default-window-height { proportion 0.50; }
@@ -144,8 +143,7 @@ window-rule {
 
 // top right
 window-rule {
-  match app-id=r#"^IA$"#
-  open-on-workspace "scratch"
+  match app-id=r#"^aichat$"#
   open-floating true
   default-column-width { proportion 0.40; }
   default-window-height { proportion 0.95; }
@@ -156,7 +154,6 @@ window-rule {
 // top left
 window-rule {
   match app-id=r#"^Kuro|todo|taskwarrior$"#
-  open-on-workspace "scratch"
   open-floating true
   default-column-width { proportion 0.40; }
   default-window-height { proportion 0.95; }
@@ -167,7 +164,6 @@ window-rule {
 // center
 window-rule {
   match app-id=r#"^notes|monitor|habits|lowfi|termout$"#
-  open-on-workspace "scratch"
   open-floating true
   default-column-width { proportion 0.75; }
   default-window-height { proportion 0.75; }
