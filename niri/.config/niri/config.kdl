@@ -65,29 +65,6 @@ output "HDMI-A-1" {
   }
 }
 
-//output "DVI-D-1" {
-//  mode "1360x768@60.015"
-//  transform "270"
-//  position x=1920 y=-180
-//  layout {
-//    gaps 4
-//    default-column-width { proportion 0.92; }
-//    preset-window-heights {
-//        proportion 0.33333
-//        proportion 0.5
-//        proportion 0.92
-//    }
-//    preset-column-widths {
-//        proportion 0.33333
-//        proportion 0.5
-//        proportion 0.92
-//    }
-//    focus-ring {
-//      width 2
-//    }
-//  }
-//}
-
 // https://yalter.github.io/niri/Configuration:-Layout
 layout {
   center-focused-column "never" // or always
